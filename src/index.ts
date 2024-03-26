@@ -1,6 +1,6 @@
-import {app} from './app';
-import {SETTINGS} from './settings';
+import { app } from './app';
+import { SETTINGS } from './settings';
 
 app.listen(SETTINGS.PORT, () => {
-    console.log('...server started')
-})
+  console.log('...server started');
+});
