@@ -4,5 +4,4 @@ import { resolutions } from './db/resolutions.enum';
 
 app.listen(config.port, () => {
   console.log('...server started');
-  console.log(resolutions.P144);
 });
