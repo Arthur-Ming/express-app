@@ -1,5 +1,5 @@
 import { req } from './test-helpers';
-import { SETTINGS } from '../src/settings';
+import config from '../src/common/config';
 
 describe('/', () => {
   it('should get empty array', async () => {

@@ -1,6 +1,8 @@
 import { app } from './app';
-import { SETTINGS } from './settings';
+import config from './common/config';
+import { resolutions } from './db/resolutions.enum';
 
-app.listen(SETTINGS.PORT, () => {
+app.listen(config.port, () => {
   console.log('...server started');
+  console.log(resolutions.P144);
 });

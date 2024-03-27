@@ -1,4 +1,5 @@
 import express from 'express';
+import videosRouter from './resources/videos/videos.routes';
 
 export const app = express();
 
@@ -6,6 +7,4 @@ const bodyParser = express.json();
 
 app.use(bodyParser);
 
-app.get('/', (req, res) => {
-  res.status(200).json({ version: '1.0' });
-});
+app.use(videosRouter);
