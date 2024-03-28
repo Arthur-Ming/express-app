@@ -12,7 +12,7 @@ export const inputValidation = (video: InputVideoBody) => {
   ) {
     errors.errorsMessages.push({
       message: 'error!!!!',
-      field: 'availableResolution',
+      field: 'availableResolutions',
     });
   }
 
