@@ -1,4 +1,4 @@
-import { resolutions } from './resolutions.enum';
+import { ResolutionsEnume } from '../resources/videos/resolutions.enum';
 
 export type VideoDBType = {
   id: number;
@@ -8,5 +8,5 @@ export type VideoDBType = {
   minAgeRestriction: null;
   createdAt: string;
   publicationDate: string;
-  availableResolution: resolutions;
+  availableResolution: ResolutionsEnume[];
 };

@@ -1,4 +1,4 @@
-export enum resolutions {
+export enum ResolutionsEnume {
   P144 = 'P144',
   P240 = 'P240',
   P360 = 'P360',
