@@ -7,14 +7,15 @@ export const add = (videosInputBody: {
   author: string;
   availableResolutions: ResolutionsEnume[];
 }) => {
+  const createdAt = Date.now();
   const newVideo: VideoDBType = {
     id: db.videos.length > 0 ? Math.max(...db.videos.map(({ id }) => id)) + 1 : 0,
     title: videosInputBody.title,
     author: videosInputBody.author,
     canBeDownloaded: true,
     minAgeRestriction: null,
-    createdAt: new Date().toISOString(),
-    publicationDate: new Date().toISOString(),
+    createdAt: new Date(createdAt).toISOString(),
+    publicationDate: new Date(createdAt + 1000 * 24 * 60 * 60).toISOString(),
     availableResolution: videosInputBody.availableResolutions,
   };
 
