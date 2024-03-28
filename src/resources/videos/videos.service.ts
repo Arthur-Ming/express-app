@@ -12,11 +12,11 @@ export const add = (videosInputBody: {
     id: db.videos.length > 0 ? Math.max(...db.videos.map(({ id }) => id)) + 1 : 0,
     title: videosInputBody.title,
     author: videosInputBody.author,
-    canBeDownloaded: true,
+    canBeDownloaded: false,
     minAgeRestriction: null,
     createdAt: new Date(createdAt).toISOString(),
     publicationDate: new Date(createdAt + 1000 * 24 * 60 * 60).toISOString(),
-    availableResolution: videosInputBody.availableResolutions,
+    availableResolutions: videosInputBody.availableResolutions,
   };
 
   db.videos.push(newVideo);
