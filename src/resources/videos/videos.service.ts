@@ -1,6 +1,7 @@
 import { db } from '../../db/db';
 import { VideoDBType } from '../../db/video-db-type';
 import { ResolutionsEnume } from './resolutions.enum';
+import { UpdateVideoBody } from './types';
 
 export const add = (videosInputBody: {
   title: string;
@@ -31,4 +32,16 @@ export const getById = (videoId: VideoDBType['id']) => {
 export const removeById = (videoId: VideoDBType['id']) => {
   const foundVideoIndex = db.videos.findIndex(({ id }) => id === videoId);
   db.videos.splice(foundVideoIndex, 1);
+};
+
+export const updateById = (videoId: VideoDBType['id'], body: UpdateVideoBody) => {
+  db.videos = db.videos.map((video) => {
+    if (videoId === video.id) {
+      return {
+        ...video,
+        ...body,
+      };
+    }
+    return video;
+  });
 };

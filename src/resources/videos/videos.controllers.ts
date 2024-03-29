@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../../db/db';
-import { add, getById, removeById } from './videos.service';
-import { inputValidation } from './validation';
+import { add, getById, removeById, updateById } from './videos.service';
+import { inputValidation, updateValidation } from './validation/helpers';
 
 export const getVideos = (req: Request, res: Response) => {
   res.status(200).json(db.videos);
@@ -29,7 +29,20 @@ export const addVideo = (req: Request, res: Response) => {
 };
 
 export const updateVideo = (req: Request, res: Response) => {
-  res.json('videos by Id' + req.params.id);
+  const videoId = req.params.id;
+  const foundVideo = getById(Number(videoId));
+  if (!foundVideo) {
+    res.sendStatus(404);
+    return;
+  }
+  const body = req.body;
+  const errors = updateValidation(body);
+  if (errors.errorsMessages.length) {
+    res.status(400).json(errors);
+    return;
+  }
+  updateById(Number(videoId), body);
+  res.sendStatus(204);
 };
 
 export const removeVideo = (req: Request, res: Response) => {
