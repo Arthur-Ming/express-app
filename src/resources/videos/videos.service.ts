@@ -10,7 +10,7 @@ export const add = (videosInputBody: {
 }) => {
   const createdAt = Date.now();
   const newVideo: VideoDBType = {
-    id: db.videos.length > 0 ? Math.max(...db.videos.map(({ id }) => id)) + 1 : 0,
+    id: db.videos.length > 0 ? Math.max(...db.videos.map(({ id }) => id)) + 1 : 1,
     title: videosInputBody.title,
     author: videosInputBody.author,
     canBeDownloaded: false,

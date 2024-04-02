@@ -9,6 +9,10 @@ export const getVideos = (req: Request, res: Response) => {
 
 export const getVideoById = (req: Request, res: Response) => {
   const videoId = req.params.id;
+  if (isNaN(Number(videoId))) {
+    res.sendStatus(400);
+    return;
+  }
   const foundVideo = getById(Number(videoId));
   if (!foundVideo) {
     res.sendStatus(404);
@@ -30,6 +34,10 @@ export const addVideo = (req: Request, res: Response) => {
 
 export const updateVideo = (req: Request, res: Response) => {
   const videoId = req.params.id;
+  if (isNaN(Number(videoId))) {
+    res.sendStatus(400);
+    return;
+  }
   const foundVideo = getById(Number(videoId));
   if (!foundVideo) {
     res.sendStatus(404);

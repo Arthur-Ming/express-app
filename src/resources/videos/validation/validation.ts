@@ -10,7 +10,7 @@ export default class Validation {
     return this.errors;
   };
   availableResolutions = (field?: InputVideoBody['availableResolutions']) => {
-    if (!Array.isArray(field) || field.find((p) => !ResolutionsEnume[p])) {
+    if (!Array.isArray(field) || !field.length || field.find((p) => !ResolutionsEnume[p])) {
       this.errors.errorsMessages.push({
         message: 'error!!!!',
         field: 'availableResolutions',
