@@ -1,6 +1,7 @@
 enum resources {
   base = '/',
   videos = 'videos',
+  blogs = 'blogs',
 }
 
 export default {
