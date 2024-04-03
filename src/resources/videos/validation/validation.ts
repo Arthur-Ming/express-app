@@ -1,5 +1,6 @@
-import { OutputErrorsType, UpdateVideoBody, InputVideoBody } from '../types';
+import { UpdateVideoBody, InputVideoBody } from '../types';
 import { ResolutionsEnume } from '../resolutions.enum';
+import { OutputErrorsType } from '../../../utils/ErrorsMessages';
 
 export default class Validation {
   private errors: OutputErrorsType = {

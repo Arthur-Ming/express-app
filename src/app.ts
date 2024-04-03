@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import videosRouter from './resources/videos/videos.routes';
 import { setDB } from './db/db';
+import postsRouter from './resources/posts/posts.routes';
+import blogsRouter from './resources/blogs/blogs.routes';
 
 export const app = express();
 
@@ -14,3 +16,5 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 });
 
 app.use(videosRouter);
+app.use(postsRouter);
+app.use(blogsRouter);

@@ -1,8 +1,8 @@
 import { DBType } from '../src/db/db';
-import { VideoDBType } from '../src/db/video-db-type';
+import { VideoDbInterface } from '../src/db/dbTypes/video-db-interface';
 import { ResolutionsEnume } from '../src/resources/videos/resolutions.enum';
 
-export const video1: VideoDBType = {
+export const video1: VideoDbInterface = {
   id: 1,
   title: 'some title',
   author: 'Art',

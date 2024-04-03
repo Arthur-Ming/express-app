@@ -1,4 +1,4 @@
-import { InputVideoBody, OutputErrorsType, UpdateVideoBody } from '../types';
+import { InputVideoBody, UpdateVideoBody } from '../types';
 import { ResolutionsEnume } from '../resolutions.enum';
 import Validation from './validation';
 

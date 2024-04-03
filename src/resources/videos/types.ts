@@ -11,12 +11,3 @@ export interface UpdateVideoBody extends InputVideoBody {
   minAgeRestriction?: number;
   publicationDate?: string;
 }
-
-type ErrorMessages = {
-  message: string;
-  field: string;
-};
-
-export type OutputErrorsType = {
-  errorsMessages: ErrorMessages[];
-};
