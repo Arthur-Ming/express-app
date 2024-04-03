@@ -1,6 +1,6 @@
-import { ResolutionsEnume } from '../resources/videos/resolutions.enum';
+import { ResolutionsEnume } from '../../resources/videos/resolutions.enum';
 
-export type VideoDBType = {
+export interface VideoDbInterface {
   id: number;
   title: string;
   author: string;
@@ -9,4 +9,4 @@ export type VideoDBType = {
   createdAt: string;
   publicationDate: string;
   availableResolutions: ResolutionsEnume[];
-};
+}
