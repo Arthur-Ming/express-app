@@ -12,7 +12,9 @@ export const blogsRepository = {
   create: (input: BlogInputData) => {
     const newBlog: BlogOutputData = {
       id: String(db.blogs.length > 0 ? Math.max(...db.blogs.map(({ id }) => Number(id))) + 1 : 1),
-      ...input,
+      name: input.name,
+      description: input.description,
+      websiteUrl: input.websiteUrl,
     };
     db.blogs.push(newBlog);
     return { id: newBlog.id };
@@ -26,7 +28,9 @@ export const blogsRepository = {
       if (db.blogs[i].id === blogId) {
         db.blogs[i] = {
           id: blogId,
-          ...input,
+          name: input.name,
+          description: input.description,
+          websiteUrl: input.websiteUrl,
         };
         break;
       }

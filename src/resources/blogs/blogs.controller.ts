@@ -6,23 +6,23 @@ export const getBlogs = (req: Request, res: Response) => {
 };
 
 export const getBlogById = (req: Request, res: Response) => {
-  const foundVideo = blogsRepository.findById(req.params.id);
-  if (!foundVideo) {
+  const foundBlog = blogsRepository.findById(req.params.id);
+  if (!foundBlog) {
     res.sendStatus(404);
     return;
   }
-  res.status(200).json(foundVideo);
+  res.status(200).json(foundBlog);
 };
 
 export const addBlog = (req: Request, res: Response) => {
   const newBlog = blogsRepository.create(req.body);
 
-  const foundVideo = blogsRepository.findById(newBlog.id);
-  if (!foundVideo) {
+  const foundBlog = blogsRepository.findById(newBlog.id);
+  if (!foundBlog) {
     res.sendStatus(404);
     return;
   }
-  res.status(201).json(foundVideo);
+  res.status(201).json(foundBlog);
 };
 
 export const updateBlog = (req: Request, res: Response) => {
