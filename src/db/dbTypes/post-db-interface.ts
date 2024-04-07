@@ -1,8 +1,10 @@
+import { ObjectId } from 'mongodb';
+
 export interface PostDbInterface {
-  id: string;
   title: string;
   shortDescription: string;
   content: string;
-  blogId: string;
+  blogId: ObjectId;
   blogName: string;
+  createdAt: Date;
 }

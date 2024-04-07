@@ -9,9 +9,8 @@ type ParamsId = { id: string };
 
 const blogsRepository = new BlogsRepository();
 export const getBlogs = async (req: Request, res: Response) => {
-  const f = await blogsRepository.find();
-  console.log(f);
-  res.status(200).json(f);
+  const blogs = await blogsRepository.find();
+  res.status(200).json(blogs);
 };
 
 export const getBlogById = async (
@@ -27,9 +26,9 @@ export const getBlogById = async (
 };
 
 export const addBlog = async (req: RequestWithBody<BlogInputData>, res: Response) => {
-  const f = await blogsRepository.create(req.body);
+  const { id: createdBlogId } = await blogsRepository.create(req.body);
 
-  const foundBlog = await blogsRepository.findById(f.id);
+  const foundBlog = await blogsRepository.findById(createdBlogId);
 
   if (!foundBlog) {
     res.sendStatus(404);
