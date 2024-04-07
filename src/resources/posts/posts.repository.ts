@@ -1,59 +1,69 @@
-// import { db } from '../../db/db';
-// import { PostInputData, PostOutputData } from './interfaces';
-// import { BlogsRepository } from '../blogs/blogs.repository';
-//
-// const blogsRepository = new BlogsRepository();
-//
-// export const postsRepository = {
-//   find: () => {
-//     return db.posts;
-//   },
-//   findById: (postId: string) => {
-//     const foundPost = db.posts.find(({ id }) => id === postId);
-//     return foundPost;
-//   },
-//   create: (input: PostInputData) => {
-//     const foundBlog = blogsRepository.findById(input.blogId);
-//     if (!foundBlog) {
-//       throw new Error(`blog with id ${input.blogId} not found`);
-//     }
-//     const newPost: PostOutputData = {
-//       id: String(db.posts.length > 0 ? Math.max(...db.posts.map(({ id }) => Number(id))) + 1 : 1),
-//       title: input.title,
-//       shortDescription: input.shortDescription,
-//       content: input.content,
-//       blogId: input.blogId,
-//       blogName: foundBlog.name,
-//     };
-//     db.posts.push(newPost);
-//     return { id: newPost.id };
-//   },
-//   update: (postId: string, input: PostInputData): boolean => {
-//     const foundPost = db.posts.find(({ id }) => id === postId);
-//     if (!foundPost) {
-//       return false;
-//     }
-//     for (let i = 0; i < db.posts.length; i++) {
-//       if (db.posts[i].id === postId) {
-//         db.posts[i] = {
-//           id: postId,
-//           title: input.title,
-//           shortDescription: input.shortDescription,
-//           content: input.content,
-//           blogId: input.blogId,
-//           blogName: foundPost.blogName,
-//         };
-//         break;
-//       }
-//     }
-//     return true;
-//   },
-//   remove: (postId: string): boolean => {
-//     const foundPostIndex = db.posts.findIndex(({ id }) => id === postId);
-//     if (foundPostIndex === -1) {
-//       return false;
-//     }
-//     db.posts.splice(foundPostIndex, 1);
-//     return true;
-//   },
-// };
+import { ObjectId, WithId } from 'mongodb';
+import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
+import { PostInputData, PostOutputData } from './interfaces';
+import { postCollection } from '../../db/post.collection';
+import { BlogsRepository } from '../blogs/blogs.repository';
+
+const blogsRepository = new BlogsRepository();
+export class PostsRepository {
+  private mapToOutput = (dbPost: WithId<PostDbInterface>): PostOutputData => {
+    return {
+      id: dbPost._id.toString(),
+      title: dbPost.title,
+      shortDescription: dbPost.shortDescription,
+      content: dbPost.content,
+      blogId: dbPost.blogId.toString(),
+      blogName: dbPost.blogName,
+      createdAt: dbPost.createdAt,
+    };
+  };
+
+  find = async () => {
+    const foundPosts = await postCollection.find({}).toArray();
+    return foundPosts.map((foundPost) => this.mapToOutput(foundPost));
+  };
+  findById = async (postId: string) => {
+    const foundPost = await postCollection.findOne({ _id: new ObjectId(postId) });
+
+    if (!foundPost) {
+      return null;
+    }
+
+    return this.mapToOutput(foundPost);
+  };
+  create = async (input: PostInputData) => {
+    const blog = await blogsRepository.findById(input.blogId);
+    if (!blog) {
+      throw new Error(`blog with id ${input.blogId} not found`);
+    }
+    const newPost: PostDbInterface = {
+      title: input.title,
+      shortDescription: input.shortDescription,
+      content: input.content,
+      blogId: new ObjectId(input.blogId),
+      blogName: blog.name,
+      createdAt: new Date(),
+    };
+    const insertOneResult = await postCollection.insertOne(newPost);
+
+    return { id: insertOneResult.insertedId.toString() };
+  };
+  update = async (postId: string, input: PostInputData): Promise<boolean> => {
+    const updateResult = await postCollection.updateOne(
+      { _id: new ObjectId(postId) },
+      {
+        $set: {
+          title: input.title,
+          shortDescription: input.shortDescription,
+          content: input.content,
+          blogId: new ObjectId(input.blogId),
+        },
+      }
+    );
+    return updateResult.matchedCount === 1;
+  };
+  remove = async (postId: string): Promise<boolean> => {
+    const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(postId) });
+    return deleteResult.deletedCount === 1;
+  };
+}

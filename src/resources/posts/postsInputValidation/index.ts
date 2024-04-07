@@ -5,8 +5,7 @@ const blogsRepository = new BlogsRepository();
 export const postsInputValidation = [
   body('blogId').custom(async (blogId, { req }) => {
     const blog = await blogsRepository.findById(blogId);
-    console.log('!!!');
-    console.log(blog);
+
     if (!blog) {
       throw new Error(`blog with id ${blogId} not found`);
     }
