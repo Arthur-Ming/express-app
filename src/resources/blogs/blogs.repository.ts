@@ -1,115 +1,60 @@
-import { db } from '../../db/db';
 import { BlogInputData, BlogOutputData } from './interfaces';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
+import { blogCollection } from '../../db/blog.collection';
+import { ObjectId, WithId } from 'mongodb';
 
 export class BlogsRepository {
-  private mapToOutput = (blog: BlogDbInterface): BlogOutputData => {
+  private mapToOutput = (dbBlog: WithId<BlogDbInterface>): BlogOutputData => {
     return {
-      id: blog.id,
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
+      id: dbBlog._id.toString(),
+      name: dbBlog.name,
+      description: dbBlog.description,
+      websiteUrl: dbBlog.websiteUrl,
+      createdAt: dbBlog.createdAt,
+      isMembership: dbBlog.isMembership,
     };
   };
 
-  find = () => {
-    return db.blogs.map((dbBlog) => this.mapToOutput(dbBlog));
+  find = async () => {
+    const foundBlogs = await blogCollection.find({}).toArray();
+    return foundBlogs.map((foundBlog) => this.mapToOutput(foundBlog));
   };
-  findById = (blogId: string) => {
-    const foundBlog = db.blogs.find(({ id }) => id === blogId);
+  findById = async (blogId: string) => {
+    const foundBlog = await blogCollection.findOne({ _id: new ObjectId(blogId) });
+
     if (!foundBlog) {
       return null;
     }
+
     return this.mapToOutput(foundBlog);
   };
-  create = (input: BlogInputData) => {
-    const newBlog: BlogOutputData = {
-      id: String(db.blogs.length > 0 ? Math.max(...db.blogs.map(({ id }) => Number(id))) + 1 : 1),
+  create = async (input: BlogInputData) => {
+    const newBlog: BlogDbInterface = {
       name: input.name,
       description: input.description,
       websiteUrl: input.websiteUrl,
+      createdAt: new Date(),
+      isMembership: false,
     };
-    db.blogs.push(newBlog);
-    return { id: newBlog.id };
+    const insertOneResult = await blogCollection.insertOne(newBlog);
+
+    return { id: insertOneResult.insertedId.toString() };
   };
-  update = (blogId: string, input: BlogInputData): boolean => {
-    const foundBlog = db.blogs.find(({ id }) => id === blogId);
-    if (!foundBlog) {
-      return false;
-    }
-    for (let i = 0; i < db.blogs.length; i++) {
-      if (db.blogs[i].id === blogId) {
-        db.blogs[i] = {
-          id: blogId,
+  update = async (blogId: string, input: BlogInputData): Promise<boolean> => {
+    const updateResult = await blogCollection.updateOne(
+      { _id: new ObjectId(blogId) },
+      {
+        $set: {
           name: input.name,
           description: input.description,
           websiteUrl: input.websiteUrl,
-        };
-        break;
+        },
       }
-    }
-    return true;
+    );
+    return updateResult.matchedCount === 1;
   };
-  remove = (blogId: string): boolean => {
-    const foundBlogIndex = db.blogs.findIndex(({ id }) => id === blogId);
-    if (foundBlogIndex === -1) {
-      return false;
-    }
-    db.blogs.splice(foundBlogIndex, 1);
-    return true;
+  remove = async (blogId: string): Promise<boolean> => {
+    const deleteResult = await blogCollection.deleteOne({ _id: new ObjectId(blogId) });
+    return deleteResult.deletedCount === 1;
   };
 }
-
-// export const blogsRepository = {
-//   find: () => {
-//     return db.blogs;
-//   },
-//   findById: (blogId: string) => {
-//     const foundBlog = db.blogs.find(({ id }) => id === blogId);
-//     return foundBlog;
-//   },
-//   create: (input: BlogInputData) => {
-//     const newBlog: BlogOutputData = {
-//       id: String(db.blogs.length > 0 ? Math.max(...db.blogs.map(({ id }) => Number(id))) + 1 : 1),
-//       name: input.name,
-//       description: input.description,
-//       websiteUrl: input.websiteUrl,
-//     };
-//     db.blogs.push(newBlog);
-//     return { id: newBlog.id };
-//   },
-//   update: (blogId: string, input: BlogInputData): boolean => {
-//     const foundBlog = db.blogs.find(({ id }) => id === blogId);
-//     if (!foundBlog) {
-//       return false;
-//     }
-//     for (let i = 0; i < db.blogs.length; i++) {
-//       if (db.blogs[i].id === blogId) {
-//         db.blogs[i] = {
-//           id: blogId,
-//           name: input.name,
-//           description: input.description,
-//           websiteUrl: input.websiteUrl,
-//         };
-//         break;
-//       }
-//     }
-//     return true;
-//   },
-//   remove: (blogId: string): boolean => {
-//     const foundBlogIndex = db.blogs.findIndex(({ id }) => id === blogId);
-//     if (foundBlogIndex === -1) {
-//       return false;
-//     }
-//     db.blogs.splice(foundBlogIndex, 1);
-//     return true;
-//   },
-//   mapToOutput(blog: BlogDbInterface): BlogOutputData {
-//     return {
-//       id: blog.id,
-//       name: blog.name,
-//       description: blog.description,
-//       websiteUrl: blog.websiteUrl,
-//     };
-//   },
-// };

@@ -4,6 +4,11 @@ export interface BlogInputData {
   websiteUrl: string;
 }
 
-export interface BlogOutputData extends BlogInputData {
+export interface BlogOutputData {
   id: string;
+  name: string;
+  description: string;
+  websiteUrl: string;
+  createdAt: Date;
+  isMembership: boolean;
 }

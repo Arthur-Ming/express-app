@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
-import videosRouter from './resources/videos/videos.routes';
-import { setDB } from './db/db';
+import { dropCollections } from './db/dropCollections';
 import postsRouter from './resources/posts/posts.routes';
 import blogsRouter from './resources/blogs/blogs.routes';
 
@@ -10,11 +9,10 @@ const bodyParser = express.json();
 
 app.use(bodyParser);
 
-app.delete('/testing/all-data', (req: Request, res: Response) => {
-  setDB();
+app.delete('/testing/all-data', async (req: Request, res: Response) => {
+  await dropCollections();
   res.sendStatus(204);
 });
 
-app.use(videosRouter);
-app.use(postsRouter);
+// app.use(postsRouter);
 app.use(blogsRouter);

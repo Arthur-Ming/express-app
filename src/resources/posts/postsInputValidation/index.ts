@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 import { inputCheckErrorsMiddleware } from '../../../utils/inputCheckErrorsMiddleware';
-import { blogsRepository } from '../../blogs/blogs.repository';
-
+import { BlogsRepository } from '../../blogs/blogs.repository';
+const blogsRepository = new BlogsRepository();
 export const postsInputValidation = [
   body('blogId').custom(async (blogId, { req }) => {
     const blog = await blogsRepository.findById(blogId);
