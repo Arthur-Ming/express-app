@@ -1,28 +1,23 @@
-import { VideoDbInterface } from './dbTypes/video-db-interface';
-import { BlogDbInterface } from './dbTypes/blog-db-interface';
-import { PostDbInterface } from './dbTypes/post-db-interface';
+import { Db, MongoClient } from 'mongodb';
+import config from '../common/config';
 
-export type DBType = {
-  videos: VideoDbInterface[];
-  blogs: BlogDbInterface[];
-  posts: PostDbInterface[];
-};
+const dbUrl = config.mongoUrl;
 
-export const db: DBType = {
-  videos: [],
-  blogs: [],
-  posts: [],
-};
+if (!dbUrl) {
+  throw new Error('dbUrl not found!!!!');
+}
 
-export const setDB = (dataset?: Partial<DBType>) => {
-  if (!dataset) {
-    db.videos = [];
-    db.blogs = [];
-    db.posts = [];
-    return;
+const client: MongoClient = new MongoClient(dbUrl);
+export const db: Db = client.db('blogger_platform');
+
+export const connectToDB = async () => {
+  try {
+    await client.connect();
+    console.log('connected to db');
+    return true;
+  } catch (e) {
+    console.log(e);
+    await client.close();
+    return false;
   }
-
-  db.videos = dataset.videos || db.videos;
-  db.blogs = dataset.blogs || db.blogs;
-  db.posts = dataset.posts || db.posts;
 };

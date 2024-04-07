@@ -8,12 +8,17 @@ type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
 type ParamsId = { id: string };
 
 const blogsRepository = new BlogsRepository();
-export const getBlogs = (req: Request, res: Response<BlogOutputData[]>) => {
-  res.status(200).json(blogsRepository.find());
+export const getBlogs = async (req: Request, res: Response) => {
+  const f = await blogsRepository.find();
+  console.log(f);
+  res.status(200).json(f);
 };
 
-export const getBlogById = (req: RequestWithParams<ParamsId>, res: Response<BlogOutputData>) => {
-  const foundBlog = blogsRepository.findById(req.params.id);
+export const getBlogById = async (
+  req: RequestWithParams<ParamsId>,
+  res: Response<BlogOutputData>
+) => {
+  const foundBlog = await blogsRepository.findById(req.params.id);
   if (!foundBlog) {
     res.sendStatus(404);
     return;
@@ -21,10 +26,11 @@ export const getBlogById = (req: RequestWithParams<ParamsId>, res: Response<Blog
   res.status(200).json(foundBlog);
 };
 
-export const addBlog = (req: RequestWithBody<BlogInputData>, res: Response<BlogOutputData>) => {
-  const { id: newBlogId } = blogsRepository.create(req.body);
+export const addBlog = async (req: RequestWithBody<BlogInputData>, res: Response) => {
+  const f = await blogsRepository.create(req.body);
 
-  const foundBlog = blogsRepository.findById(newBlogId);
+  const foundBlog = await blogsRepository.findById(f.id);
+
   if (!foundBlog) {
     res.sendStatus(404);
     return;
@@ -32,19 +38,21 @@ export const addBlog = (req: RequestWithBody<BlogInputData>, res: Response<BlogO
   res.status(201).json(foundBlog);
 };
 
-export const updateBlog = (
+export const updateBlog = async (
   req: RequestWithParamsAndBody<ParamsId, BlogInputData>,
   res: Response<void>
 ) => {
-  if (!blogsRepository.update(req.params.id, req.body)) {
+  const isUpdated = await blogsRepository.update(req.params.id, req.body);
+  if (!isUpdated) {
     res.sendStatus(404);
     return;
   }
   res.sendStatus(204);
 };
 
-export const deleteBlog = (req: RequestWithParams<ParamsId>, res: Response<void>) => {
-  if (!blogsRepository.remove(req.params.id)) {
+export const deleteBlog = async (req: RequestWithParams<ParamsId>, res: Response<void>) => {
+  const isDeleted = await blogsRepository.remove(req.params.id);
+  if (!isDeleted) {
     res.sendStatus(404);
     return;
   }
