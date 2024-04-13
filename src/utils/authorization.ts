@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-export const ADMIN_AUTH = 'admin:qwerty'; // get from SETTINGS
+export const ADMIN_AUTH = 'admin:qwerty';
 export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
 
