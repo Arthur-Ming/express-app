@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export interface BlogInputData {
   name: string;
   description: string;
@@ -12,3 +14,8 @@ export interface BlogOutputData {
   createdAt: Date;
   isMembership: boolean;
 }
+
+export type RequestWithBody<T> = Request<{}, {}, T>;
+export type RequestWithParams<T> = Request<T>;
+export type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
+export type ParamsId = { id: string };

@@ -15,6 +15,24 @@ export class BlogsRepository {
     };
   };
 
+  private createBlog = (input: BlogInputData): BlogDbInterface => {
+    return {
+      name: input.name,
+      description: input.description,
+      websiteUrl: input.websiteUrl,
+      createdAt: new Date(),
+      isMembership: false,
+    };
+  };
+
+  private updateBlog = (input: BlogInputData): BlogInputData => {
+    return {
+      name: input.name,
+      description: input.description,
+      websiteUrl: input.websiteUrl,
+    };
+  };
+
   find = async () => {
     const foundBlogs = await blogCollection.find({}).toArray();
     return foundBlogs.map((foundBlog) => this.mapToOutput(foundBlog));
@@ -28,31 +46,22 @@ export class BlogsRepository {
 
     return this.mapToOutput(foundBlog);
   };
-  create = async (input: BlogInputData) => {
-    const newBlog: BlogDbInterface = {
-      name: input.name,
-      description: input.description,
-      websiteUrl: input.websiteUrl,
-      createdAt: new Date(),
-      isMembership: false,
-    };
+  add = async (input: BlogInputData) => {
+    const newBlog = this.createBlog(input);
     const insertOneResult = await blogCollection.insertOne(newBlog);
-
     return { id: insertOneResult.insertedId.toString() };
   };
+
   update = async (blogId: string, input: BlogInputData): Promise<boolean> => {
     const updateResult = await blogCollection.updateOne(
       { _id: new ObjectId(blogId) },
       {
-        $set: {
-          name: input.name,
-          description: input.description,
-          websiteUrl: input.websiteUrl,
-        },
+        $set: this.updateBlog(input),
       }
     );
     return updateResult.matchedCount === 1;
   };
+
   remove = async (blogId: string): Promise<boolean> => {
     const deleteResult = await blogCollection.deleteOne({ _id: new ObjectId(blogId) });
     return deleteResult.deletedCount === 1;

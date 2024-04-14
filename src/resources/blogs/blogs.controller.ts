@@ -1,16 +1,19 @@
 import { Request, Response } from 'express';
 import { BlogsRepository } from './blogs.repository';
-import { BlogInputData, BlogOutputData } from './interfaces';
-
-type RequestWithBody<T> = Request<{}, {}, T>;
-type RequestWithParams<T> = Request<T>;
-type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
-type ParamsId = { id: string };
+import {
+  BlogInputData,
+  BlogOutputData,
+  ParamsId,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from './interfaces';
+import { httpStatutes } from '../../common/httpStatutes';
 
 const blogsRepository = new BlogsRepository();
-export const getBlogs = async (req: Request, res: Response) => {
+export const getBlogs = async (req: Request, res: Response<BlogOutputData[]>) => {
   const blogs = await blogsRepository.find();
-  res.status(200).json(blogs);
+  res.status(httpStatutes.OK_200).json(blogs);
 };
 
 export const getBlogById = async (
@@ -19,41 +22,41 @@ export const getBlogById = async (
 ) => {
   const foundBlog = await blogsRepository.findById(req.params.id);
   if (!foundBlog) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(200).json(foundBlog);
+  res.status(httpStatutes.OK_200).json(foundBlog);
 };
 
 export const addBlog = async (req: RequestWithBody<BlogInputData>, res: Response) => {
-  const { id: createdBlogId } = await blogsRepository.create(req.body);
+  const { id: createdBlogId } = await blogsRepository.add(req.body);
 
   const foundBlog = await blogsRepository.findById(createdBlogId);
 
   if (!foundBlog) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(201).json(foundBlog);
+  res.status(httpStatutes.CREATED_201).json(foundBlog);
 };
 
 export const updateBlog = async (
   req: RequestWithParamsAndBody<ParamsId, BlogInputData>,
-  res: Response<void>
+  res: Response
 ) => {
   const isUpdated = await blogsRepository.update(req.params.id, req.body);
   if (!isUpdated) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.sendStatus(204);
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 
-export const deleteBlog = async (req: RequestWithParams<ParamsId>, res: Response<void>) => {
+export const deleteBlog = async (req: RequestWithParams<ParamsId>, res: Response) => {
   const isDeleted = await blogsRepository.remove(req.params.id);
   if (!isDeleted) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.sendStatus(204);
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };

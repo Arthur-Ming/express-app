@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { ValidationError, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 
 export const inputCheckErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const e = validationResult(req);
 
   const errors = e.array({ onlyFirstError: true });
-  console.log(errors);
+
   if (errors.length) {
     res.status(400).json({
       errorsMessages: errors.map((e) => ({

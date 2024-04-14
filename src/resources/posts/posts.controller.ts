@@ -1,16 +1,19 @@
 import { Request, Response } from 'express';
-import { PostInputData, PostOutputData } from './interfaces';
+import {
+  ParamsId,
+  PostInputData,
+  PostOutputData,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from './interfaces';
 import { PostsRepository } from './posts.repository';
-
-type RequestWithBody<T> = Request<{}, {}, T>;
-type RequestWithParams<T> = Request<T>;
-type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
-type ParamsId = { id: string };
+import { httpStatutes } from '../../common/httpStatutes';
 
 const postsRepository = new PostsRepository();
 export const getPosts = async (req: Request, res: Response) => {
   const posts = await postsRepository.find();
-  res.status(200).json(posts);
+  res.status(httpStatutes.OK_200).json(posts);
 };
 
 export const getPostById = async (
@@ -19,22 +22,22 @@ export const getPostById = async (
 ) => {
   const foundPost = await postsRepository.findById(req.params.id);
   if (!foundPost) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(200).json(foundPost);
+  res.status(httpStatutes.OK_200).json(foundPost);
 };
 
 export const addPost = async (req: RequestWithBody<PostInputData>, res: Response) => {
-  const { id: createdPostId } = await postsRepository.create(req.body);
+  const { id: createdPostId } = await postsRepository.add(req.body);
 
   const foundPost = await postsRepository.findById(createdPostId);
 
   if (!foundPost) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(201).json(foundPost);
+  res.status(httpStatutes.CREATED_201).json(foundPost);
 };
 
 export const updatePost = async (
@@ -43,17 +46,17 @@ export const updatePost = async (
 ) => {
   const isUpdated = await postsRepository.update(req.params.id, req.body);
   if (!isUpdated) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.sendStatus(204);
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 
 export const deletePost = async (req: RequestWithParams<ParamsId>, res: Response<void>) => {
   const isDeleted = await postsRepository.remove(req.params.id);
   if (!isDeleted) {
-    res.sendStatus(404);
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.sendStatus(204);
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };

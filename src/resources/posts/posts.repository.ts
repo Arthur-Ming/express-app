@@ -3,6 +3,7 @@ import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
 import { PostInputData, PostOutputData } from './interfaces';
 import { postCollection } from '../../db/post.collection';
 import { BlogsRepository } from '../blogs/blogs.repository';
+import { BlogOutputData } from '../blogs/interfaces';
 
 const blogsRepository = new BlogsRepository();
 export class PostsRepository {
@@ -15,6 +16,16 @@ export class PostsRepository {
       blogId: dbPost.blogId.toString(),
       blogName: dbPost.blogName,
       createdAt: dbPost.createdAt,
+    };
+  };
+  private createPost = (input: PostInputData, blog: BlogOutputData): PostDbInterface => {
+    return {
+      title: input.title,
+      shortDescription: input.shortDescription,
+      content: input.content,
+      blogId: new ObjectId(input.blogId),
+      blogName: blog.name,
+      createdAt: new Date(),
     };
   };
 
@@ -31,19 +42,14 @@ export class PostsRepository {
 
     return this.mapToOutput(foundPost);
   };
-  create = async (input: PostInputData) => {
+  add = async (input: PostInputData) => {
     const blog = await blogsRepository.findById(input.blogId);
+
     if (!blog) {
       throw new Error(`blog with id ${input.blogId} not found`);
     }
-    const newPost: PostDbInterface = {
-      title: input.title,
-      shortDescription: input.shortDescription,
-      content: input.content,
-      blogId: new ObjectId(input.blogId),
-      blogName: blog.name,
-      createdAt: new Date(),
-    };
+    const newPost = this.createPost(input, blog);
+
     const insertOneResult = await postCollection.insertOne(newPost);
 
     return { id: insertOneResult.insertedId.toString() };
