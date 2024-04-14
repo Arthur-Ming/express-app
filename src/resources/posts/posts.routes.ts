@@ -9,13 +9,19 @@ import {
   updatePost,
 } from './posts.controller';
 import { checkAuthorization } from '../../utils/authorization';
-import { postsForSpecificBlogInputValidation, postsInputValidation } from './postsInputValidation';
+import {
+  postsForSpecificBlogIdValidation,
+  postsForSpecificBlogInputValidation,
+  postsInputValidation,
+} from './postsInputValidation';
 
 const postsRouter = Router();
 
 postsRouter.get(routes.posts, getPosts);
 postsRouter.get(routes.postById, getPostById);
+postsRouter.get(routes.postForBlog, postsForSpecificBlogIdValidation, getPosts);
 postsRouter.post(routes.posts, checkAuthorization, postsInputValidation, addPost);
+
 postsRouter.post(
   routes.postForBlog,
   checkAuthorization,

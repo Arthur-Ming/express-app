@@ -15,7 +15,7 @@ import { PostsService } from './posts.service';
 const postsRepository = new PostsRepository();
 const postsService = new PostsService();
 export const getPosts = async (req: Request, res: Response) => {
-  const posts = await postsRepository.find();
+  const posts = await postsService.find(req.query, req.params.blogId);
   res.status(httpStatutes.OK_200).json(posts);
 };
 
