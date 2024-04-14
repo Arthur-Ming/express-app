@@ -7,6 +7,8 @@ export interface PostInputData {
   blogId: string;
 }
 
+export type PostInputDataForSpecificBlog = Omit<PostInputData, 'blogId'>;
+
 export interface PostOutputData {
   id: string;
   title: string;
