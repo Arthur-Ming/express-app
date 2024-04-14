@@ -44,4 +44,5 @@ export const postsForSpecificBlogIdValidation = [
     }
     return true;
   }),
+  paramsIdCheckErrorsMiddleware,
 ];
