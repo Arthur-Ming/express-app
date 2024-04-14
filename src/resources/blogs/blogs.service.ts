@@ -7,7 +7,7 @@ import {
 
 const blogsRepository = new BlogsRepository();
 
-const setDefaultQueryParams = (query: BlogsQueryParamsRequest): BlogsQueryParamsDB => {
+const setDefaultPaginationParams = (query: BlogsQueryParamsRequest): BlogsQueryParamsDB => {
   return {
     pageNumber: query.pageNumber ? +query.pageNumber : 1,
     pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
@@ -18,7 +18,7 @@ const setDefaultQueryParams = (query: BlogsQueryParamsRequest): BlogsQueryParams
 };
 export class BlogsService {
   find = async (query: BlogsQueryParamsRequest): Promise<BlogOutputDataWithPagination> => {
-    const queryParams = setDefaultQueryParams(query);
+    const queryParams = setDefaultPaginationParams(query);
     const items = await blogsRepository.find(queryParams);
     const totalCount = await blogsRepository.getTotalCount(queryParams);
 

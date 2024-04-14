@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
-import { PostInputData, PostOutputData } from './interfaces';
+import { PostInputData, PostOutputData, PostsPaginationParamsForDB } from './interfaces';
 import { postCollection } from '../../db/post.collection';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogOutputData } from '../blogs/interfaces';
@@ -29,10 +29,47 @@ export class PostsRepository {
     };
   };
 
-  find = async () => {
-    const foundPosts = await postCollection.find({}).toArray();
+  getTotalCount = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
+    if (!blogId) {
+      return await postCollection.countDocuments({});
+    }
+
+    return await postCollection.countDocuments({
+      blogId: new ObjectId(blogId),
+    });
+  };
+
+  find = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
+    if (!blogId) {
+      console.log('!blogId');
+      const foundPosts = await postCollection
+        .find({})
+        .sort(queryParams.sortBy, queryParams.sortDirection)
+        .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
+        .limit(queryParams.pageSize)
+        .toArray();
+      return foundPosts.map((foundPost) => this.mapToOutput(foundPost));
+    }
+
+    const foundPosts = await postCollection
+      .find({
+        blogId: new ObjectId(blogId),
+      })
+      .sort(queryParams.sortBy, queryParams.sortDirection)
+      .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
+      .limit(queryParams.pageSize)
+      .toArray();
     return foundPosts.map((foundPost) => this.mapToOutput(foundPost));
   };
+  // find = async (queryParams: BlogsQueryParamsDB) => {
+  //   const foundBlogs = await blogCollection
+  //     .find({ name: { $regex: queryParams.searchNameTerm, $options: 'i' } })
+  //     .sort(queryParams.sortBy, queryParams.sortDirection)
+  //     .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
+  //     .limit(queryParams.pageSize)
+  //     .toArray();
+  //   return foundBlogs.map((foundBlog) => this.mapToOutput(foundBlog));
+  // };
   findById = async (postId: string) => {
     const foundPost = await postCollection.findOne({ _id: new ObjectId(postId) });
 

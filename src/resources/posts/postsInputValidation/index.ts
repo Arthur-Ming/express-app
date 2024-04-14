@@ -34,3 +34,14 @@ export const postsForSpecificBlogInputValidation = [
   body('content').isString().trim().isLength({ min: 3, max: 1000 }),
   inputCheckErrorsMiddleware,
 ];
+
+export const postsForSpecificBlogIdValidation = [
+  param('blogId').custom(async (blogId, { req }) => {
+    const blog = await blogsRepository.findById(blogId);
+
+    if (!blog) {
+      throw new Error(`blog with id ${blogId} not found`);
+    }
+    return true;
+  }),
+];
