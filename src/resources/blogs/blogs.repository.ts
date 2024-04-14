@@ -1,4 +1,4 @@
-import { BlogInputData, BlogOutputData } from './interfaces';
+import { BlogInputData, BlogOutputData, BlogsQueryParamsDB } from './interfaces';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
 import { blogCollection } from '../../db/blog.collection';
 import { ObjectId, WithId } from 'mongodb';
@@ -33,8 +33,19 @@ export class BlogsRepository {
     };
   };
 
-  find = async () => {
-    const foundBlogs = await blogCollection.find({}).toArray();
+  getTotalCount = async (queryParams: BlogsQueryParamsDB) => {
+    return await blogCollection.countDocuments({
+      name: { $regex: queryParams.searchNameTerm, $options: 'i' },
+    });
+  };
+
+  find = async (queryParams: BlogsQueryParamsDB) => {
+    const foundBlogs = await blogCollection
+      .find({ name: { $regex: queryParams.searchNameTerm, $options: 'i' } })
+      .sort(queryParams.sortBy, queryParams.sortDirection)
+      .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
+      .limit(queryParams.pageSize)
+      .toArray();
     return foundBlogs.map((foundBlog) => this.mapToOutput(foundBlog));
   };
   findById = async (blogId: string) => {
