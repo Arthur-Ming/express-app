@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import {
   ParamsId,
   PostInputData,
+  PostInputDataForSpecificBlog,
   PostOutputData,
   RequestWithBody,
   RequestWithParams,
@@ -9,8 +10,10 @@ import {
 } from './interfaces';
 import { PostsRepository } from './posts.repository';
 import { httpStatutes } from '../../common/httpStatutes';
+import { PostsService } from './posts.service';
 
 const postsRepository = new PostsRepository();
+const postsService = new PostsService();
 export const getPosts = async (req: Request, res: Response) => {
   const posts = await postsRepository.find();
   res.status(httpStatutes.OK_200).json(posts);
@@ -28,7 +31,11 @@ export const getPostById = async (
   res.status(httpStatutes.OK_200).json(foundPost);
 };
 
-export const addPost = async (req: RequestWithBody<PostInputData>, res: Response) => {
+export const addPost = async (
+  req: RequestWithBody<PostInputData>,
+  res: Response<PostOutputData>
+) => {
+  console.log('!!!!');
   const { id: createdPostId } = await postsRepository.add(req.body);
 
   const foundPost = await postsRepository.findById(createdPostId);
@@ -38,6 +45,21 @@ export const addPost = async (req: RequestWithBody<PostInputData>, res: Response
     return;
   }
   res.status(httpStatutes.CREATED_201).json(foundPost);
+};
+
+export const addPostForSpecificBlog = async (
+  req: RequestWithParamsAndBody<{ blogId: string }, PostInputDataForSpecificBlog>,
+  res: Response<PostOutputData>
+) => {
+  console.log(req.params.blogId);
+  const createdPost = await postsService.addPostForSpecificBlog(req.params.blogId, req.body);
+
+  if (!createdPost) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+
+  res.status(httpStatutes.CREATED_201).json(createdPost);
 };
 
 export const updatePost = async (
