@@ -42,7 +42,7 @@ export const addBlog = async (req: RequestWithBody<BlogInputData>, res: Response
 
 export const updateBlog = async (
   req: RequestWithParamsAndBody<ParamsId, BlogInputData>,
-  res: Response<void>
+  res: Response
 ) => {
   const isUpdated = await blogsRepository.update(req.params.id, req.body);
   if (!isUpdated) {
@@ -52,7 +52,7 @@ export const updateBlog = async (
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 
-export const deleteBlog = async (req: RequestWithParams<ParamsId>, res: Response<void>) => {
+export const deleteBlog = async (req: RequestWithParams<ParamsId>, res: Response) => {
   const isDeleted = await blogsRepository.remove(req.params.id);
   if (!isDeleted) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);

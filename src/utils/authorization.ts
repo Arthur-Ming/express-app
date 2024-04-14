@@ -1,16 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
+import config from '../common/config';
+import { httpStatutes } from '../common/httpStatutes';
 
-export const ADMIN_AUTH = 'admin:qwerty';
 export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
 
   if (!auth) {
-    res.status(401).json({});
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
 
-  if ('Basic ' + btoa(ADMIN_AUTH) !== auth) {
-    res.status(401).json({});
+  if ('Basic ' + btoa(config.adminAuth) !== auth) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
 
