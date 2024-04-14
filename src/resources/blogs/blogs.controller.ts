@@ -3,16 +3,19 @@ import { BlogsRepository } from './blogs.repository';
 import {
   BlogInputData,
   BlogOutputData,
+  BlogOutputDataWithPagination,
   ParamsId,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
 } from './interfaces';
 import { httpStatutes } from '../../common/httpStatutes';
+import { BlogsService } from './blogs.service';
 
 const blogsRepository = new BlogsRepository();
-export const getBlogs = async (req: Request, res: Response<BlogOutputData[]>) => {
-  const blogs = await blogsRepository.find();
+const blogsService = new BlogsService();
+export const getBlogs = async (req: Request, res: Response<BlogOutputDataWithPagination>) => {
+  const blogs = await blogsService.find(req.query);
   res.status(httpStatutes.OK_200).json(blogs);
 };
 

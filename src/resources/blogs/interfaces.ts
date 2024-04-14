@@ -15,6 +15,30 @@ export interface BlogOutputData {
   isMembership: boolean;
 }
 
+export interface BlogsQueryParamsRequest {
+  searchNameTerm?: string;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export interface BlogsQueryParamsDB {
+  searchNameTerm: string;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
+  pageNumber: number;
+  pageSize: number;
+}
+
+export interface BlogOutputDataWithPagination {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: BlogOutputData[];
+}
+
 export type RequestWithBody<T> = Request<{}, {}, T>;
 export type RequestWithParams<T> = Request<T>;
 export type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
