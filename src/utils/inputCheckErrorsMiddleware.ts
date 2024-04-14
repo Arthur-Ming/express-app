@@ -17,3 +17,15 @@ export const inputCheckErrorsMiddleware = (req: Request, res: Response, next: Ne
   }
   next();
 };
+
+export const paramsIdCheckErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const e = validationResult(req);
+
+  const errors = e.array({ onlyFirstError: true });
+
+  if (errors.length) {
+    res.sendStatus(404);
+    return;
+  }
+  next();
+};
