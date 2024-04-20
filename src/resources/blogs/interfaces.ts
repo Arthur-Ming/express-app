@@ -15,18 +15,15 @@ export interface BlogOutputData {
   isMembership: boolean;
 }
 
-export interface BlogsQueryParamsRequest {
-  searchNameTerm?: string;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  pageNumber?: number;
-  pageSize?: number;
+export enum BlogsSortDirection {
+  asc = 'asc',
+  desc = 'desc',
 }
 
-export interface BlogsQueryParamsDB {
+export interface BlogsQueryParams {
   searchNameTerm: string;
   sortBy: string;
-  sortDirection: 'asc' | 'desc';
+  sortDirection: BlogsSortDirection;
   pageNumber: number;
   pageSize: number;
 }
