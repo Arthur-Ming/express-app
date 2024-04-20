@@ -20,7 +20,7 @@ export const postsInputValidation = [
   inputCheckErrorsMiddleware,
 ];
 export const postsForSpecificBlogInputValidation = [
-  param('blogId').custom(async (blogId, { req }) => {
+  param('blogId').custom(async (blogId) => {
     const blog = await blogsRepository.findById(blogId);
 
     if (!blog) {

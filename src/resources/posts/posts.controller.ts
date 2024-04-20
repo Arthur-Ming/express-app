@@ -15,7 +15,7 @@ import { PostsService } from './posts.service';
 const postsRepository = new PostsRepository();
 const postsService = new PostsService();
 export const getPosts = async (req: Request, res: Response) => {
-  const posts = await postsService.find(req.query, req.params.blogId);
+  const posts = await postsService.findByQueryParams(req.query, req.params.blogId);
   res.status(httpStatutes.OK_200).json(posts);
 };
 
@@ -23,7 +23,7 @@ export const getPostById = async (
   req: RequestWithParams<ParamsId>,
   res: Response<PostOutputData>
 ) => {
-  const foundPost = await postsRepository.findById(req.params.id);
+  const foundPost = await postsService.findById(req.params.id);
   if (!foundPost) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
@@ -38,7 +38,7 @@ export const addPost = async (
   console.log('!!!!');
   const { id: createdPostId } = await postsRepository.add(req.body);
 
-  const foundPost = await postsRepository.findById(createdPostId);
+  const foundPost = await postsService.findById(createdPostId);
 
   if (!foundPost) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
@@ -51,7 +51,6 @@ export const addPostForSpecificBlog = async (
   req: RequestWithParamsAndBody<{ blogId: string }, PostInputDataForSpecificBlog>,
   res: Response<PostOutputData>
 ) => {
-  console.log(req.params.blogId);
   const createdPost = await postsService.addPostForSpecificBlog(req.params.blogId, req.body);
 
   if (!createdPost) {
