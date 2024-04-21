@@ -1,11 +1,8 @@
 import { body } from 'express-validator';
-import {
-  inputCheckErrorsMiddleware,
-  paramsIdCheckErrorsMiddleware,
-} from '../../../utils/inputCheckErrorsMiddleware';
 import { BlogsRepository } from '../../blogs/blogs.repository';
 const blogsRepository = new BlogsRepository();
 export const postsInputBlogIdValidation = [
+  body('blogId').isMongoId(),
   body('blogId').custom(async (blogId) => {
     const blog = await blogsRepository.findById(blogId);
 
@@ -14,5 +11,4 @@ export const postsInputBlogIdValidation = [
     }
     return true;
   }),
-  paramsIdCheckErrorsMiddleware,
 ];
