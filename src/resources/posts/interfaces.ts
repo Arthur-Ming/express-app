@@ -1,13 +1,14 @@
 import { Request } from 'express';
 
-export interface PostInputData {
+export interface PostInputDataForSpecificBlog {
   title: string;
   shortDescription: string;
   content: string;
-  blogId: string;
 }
 
-export type PostInputDataForSpecificBlog = Omit<PostInputData, 'blogId'>;
+export interface PostInputData extends PostInputDataForSpecificBlog {
+  blogId: string;
+}
 
 export interface PostOutputData {
   id: string;

@@ -25,10 +25,17 @@ postsRouter.post(routes.posts, checkAuthorization, postsInputValidation, addPost
 postsRouter.post(
   routes.postForBlog,
   checkAuthorization,
+  postsForSpecificBlogIdValidation,
   postsForSpecificBlogInputValidation,
   addPostForSpecificBlog
 );
-postsRouter.put(routes.postById, checkAuthorization, postsInputValidation, updatePost);
+postsRouter.put(
+  routes.postById,
+  checkAuthorization,
+  postsForSpecificBlogIdValidation,
+  postsInputValidation,
+  updatePost
+);
 postsRouter.delete(routes.postById, checkAuthorization, deletePost);
 
 export default postsRouter;

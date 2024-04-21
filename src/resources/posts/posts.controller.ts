@@ -35,16 +35,13 @@ export const addPost = async (
   req: RequestWithBody<PostInputData>,
   res: Response<PostOutputData>
 ) => {
-  console.log('!!!!');
-  const { id: createdPostId } = await postsRepository.add(req.body);
+  const createdPost = await postsService.addPost(req.body);
 
-  const foundPost = await postsService.findById(createdPostId);
-
-  if (!foundPost) {
+  if (!createdPost) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(httpStatutes.CREATED_201).json(foundPost);
+  res.status(httpStatutes.CREATED_201).json(createdPost);
 };
 
 export const addPostForSpecificBlog = async (
