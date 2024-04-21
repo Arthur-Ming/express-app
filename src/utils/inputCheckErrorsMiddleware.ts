@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { queryParamsValidation } from '../resources/blogs/blogsInputValidation';
 
 export const inputCheckErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const e = validationResult(req);

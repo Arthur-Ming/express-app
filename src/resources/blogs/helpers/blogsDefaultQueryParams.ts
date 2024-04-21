@@ -1,9 +1,10 @@
-import { BlogsQueryParams, BlogsSortDirection } from '../interfaces';
+import { BlogsQueryParams } from '../types/interfaces';
+import { BlogsQueryParamsEnum, BlogsSortDirection } from '../types/enum';
 
 export const blogsDefaultQueryParams: BlogsQueryParams = {
-  pageNumber: 1,
-  pageSize: 10,
-  sortBy: 'createdAt',
-  sortDirection: BlogsSortDirection.desc,
-  searchNameTerm: '',
+  [BlogsQueryParamsEnum.pageNumber]: 1,
+  [BlogsQueryParamsEnum.pageSize]: 10,
+  [BlogsQueryParamsEnum.sortBy]: 'createdAt',
+  [BlogsQueryParamsEnum.sortDirection]: BlogsSortDirection.desc,
+  [BlogsQueryParamsEnum.searchNameTerm]: '',
 };

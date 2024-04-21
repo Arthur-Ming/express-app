@@ -1,54 +1,28 @@
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
-import { PostInputData, PostOutputData, PostsPaginationParamsForDB } from './interfaces';
+import { PostInputData, PostsPaginationParams } from './types/interfaces';
 import { postCollection } from '../../db/post.collection';
-import { BlogsRepository } from '../blogs/blogs.repository';
-import { BlogOutputData } from '../blogs/interfaces';
-import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
 
-const blogsRepository = new BlogsRepository();
 export class PostsRepository {
-  private createPost = (input: PostInputData, blog: BlogDbInterface): PostDbInterface => {
-    return {
-      title: input.title,
-      shortDescription: input.shortDescription,
-      content: input.content,
-      blogId: new ObjectId(input.blogId),
-      blogName: blog.name,
-      createdAt: new Date(),
-    };
+  private filter = (blogId?: string) => {
+    return blogId
+      ? {
+          blogId: new ObjectId(blogId),
+        }
+      : {};
   };
 
-  getTotalCount = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
-    if (!blogId) {
-      return await postCollection.countDocuments({});
-    }
-
-    return await postCollection.countDocuments({
-      blogId: new ObjectId(blogId),
-    });
+  getTotalCount = async (queryParams: PostsPaginationParams, blogId?: string) => {
+    return await postCollection.countDocuments(this.filter(blogId));
   };
 
-  find = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
-    if (!blogId) {
-      const foundPosts = await postCollection
-        .find({})
-        .sort(queryParams.sortBy, queryParams.sortDirection)
-        .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
-        .limit(queryParams.pageSize)
-        .toArray();
-      return foundPosts;
-    }
-
-    const foundPosts = await postCollection
-      .find({
-        blogId: new ObjectId(blogId),
-      })
+  find = async (queryParams: PostsPaginationParams, blogId?: string) => {
+    return await postCollection
+      .find(this.filter(blogId))
       .sort(queryParams.sortBy, queryParams.sortDirection)
       .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
       .limit(queryParams.pageSize)
       .toArray();
-    return foundPosts;
   };
 
   findById = async (postId: string) => {
@@ -60,14 +34,7 @@ export class PostsRepository {
 
     return foundPost;
   };
-  add = async (input: PostInputData) => {
-    const blog = await blogsRepository.findById(input.blogId);
-
-    if (!blog) {
-      throw new Error(`blog with id ${input.blogId} not found`);
-    }
-    const newPost = this.createPost(input, blog);
-
+  add = async (newPost: PostDbInterface) => {
     const insertOneResult = await postCollection.insertOne(newPost);
 
     return { id: insertOneResult.insertedId.toString() };

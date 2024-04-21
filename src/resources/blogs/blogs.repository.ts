@@ -1,4 +1,4 @@
-import { BlogInputData, BlogsQueryParams } from './interfaces';
+import { BlogInputData, BlogsQueryParams } from './types/interfaces';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
 import { blogCollection } from '../../db/blog.collection';
 import { ObjectId } from 'mongodb';

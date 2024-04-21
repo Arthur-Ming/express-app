@@ -1,7 +1,7 @@
 import { req } from './test-helpers';
 import routes from '../src/common/routes';
 import { httpStatutes } from '../src/common/httpStatutes';
-import { BlogOutputData } from '../src/resources/blogs/interfaces';
+import { BlogOutputData } from '../src/resources/blogs/types/interfaces';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
 

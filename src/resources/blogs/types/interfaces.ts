@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { BlogsQueryParamsEnum, BlogsSortDirection } from './enum';
 
 export interface BlogInputData {
   name: string;
@@ -15,17 +15,12 @@ export interface BlogOutputData {
   isMembership: boolean;
 }
 
-export enum BlogsSortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
-
 export interface BlogsQueryParams {
-  searchNameTerm: string;
-  sortBy: string;
-  sortDirection: BlogsSortDirection;
-  pageNumber: number;
-  pageSize: number;
+  [BlogsQueryParamsEnum.searchNameTerm]: string;
+  [BlogsQueryParamsEnum.sortBy]: string;
+  [BlogsQueryParamsEnum.sortDirection]: BlogsSortDirection;
+  [BlogsQueryParamsEnum.pageNumber]: number;
+  [BlogsQueryParamsEnum.pageSize]: number;
 }
 
 export interface BlogOutputDataWithPagination {
@@ -35,8 +30,3 @@ export interface BlogOutputDataWithPagination {
   totalCount: number;
   items: BlogOutputData[];
 }
-
-export type RequestWithBody<T> = Request<{}, {}, T>;
-export type RequestWithParams<T> = Request<T>;
-export type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
-export type ParamsId = { id: string };
