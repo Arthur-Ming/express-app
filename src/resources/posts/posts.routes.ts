@@ -19,7 +19,12 @@ const postsRouter = Router();
 
 postsRouter.get(routes.posts, postsQueryParamsValidation, getPosts);
 postsRouter.get(routes.postById, postParamsIdValidation, getPostById);
-postsRouter.get(routes.postForBlog, postsForSpecificBlogIdValidation, getPosts);
+postsRouter.get(
+  routes.postForBlog,
+  postsForSpecificBlogIdValidation,
+  postsQueryParamsValidation,
+  getPosts
+);
 postsRouter.post(
   routes.posts,
   checkAuthorization,
