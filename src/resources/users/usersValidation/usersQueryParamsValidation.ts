@@ -33,7 +33,7 @@ export const usersQueryParamsValidation = [
   query(UsersQueryParamsEnum.pageSize)
     .default(usersDefaultPaginationParams.pageSize)
     .isNumeric()
-    .isInt({ min: 1, max: 20 })
+    .isInt({ min: 1, max: 100 })
     .toInt(),
   queryParamsErrorsMiddleware,
 ];
