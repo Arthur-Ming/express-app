@@ -9,33 +9,40 @@ import {
   updatePost,
 } from './posts.controller';
 import { checkAuthorization } from '../../utils/authorization';
-import {
-  postsForSpecificBlogIdValidation,
-  postsForSpecificBlogInputValidation,
-  postsInputValidation,
-} from './postsInputValidation';
+import { postsForSpecificBlogIdValidation } from './postsValidation/postsForSpecificBlogIdValidation';
+import { postsInputBodyValidation } from './postsValidation/postsInputBodyValidation';
+import { postsQueryParamsValidation } from './postsValidation/postsQueryParamsValidation';
+import { postsInputBlogIdValidation } from './postsValidation/postsInputBlogIdValidation';
+import { postParamsIdValidation } from './postsValidation/postParamsIdValidation';
 
 const postsRouter = Router();
 
-postsRouter.get(routes.posts, getPosts);
-postsRouter.get(routes.postById, getPostById);
+postsRouter.get(routes.posts, postsQueryParamsValidation, getPosts);
+postsRouter.get(routes.postById, postParamsIdValidation, getPostById);
 postsRouter.get(routes.postForBlog, postsForSpecificBlogIdValidation, getPosts);
-postsRouter.post(routes.posts, checkAuthorization, postsInputValidation, addPost);
+postsRouter.post(
+  routes.posts,
+  checkAuthorization,
+  postsInputBlogIdValidation,
+  postsInputBodyValidation,
+  addPost
+);
 
 postsRouter.post(
   routes.postForBlog,
   checkAuthorization,
   postsForSpecificBlogIdValidation,
-  postsForSpecificBlogInputValidation,
+  postsInputBodyValidation,
   addPostForSpecificBlog
 );
 postsRouter.put(
   routes.postById,
   checkAuthorization,
-  postsForSpecificBlogIdValidation,
-  postsInputValidation,
+  postParamsIdValidation,
+  postsInputBlogIdValidation,
+  postsInputBodyValidation,
   updatePost
 );
-postsRouter.delete(routes.postById, checkAuthorization, deletePost);
+postsRouter.delete(routes.postById, postParamsIdValidation, checkAuthorization, deletePost);
 
 export default postsRouter;

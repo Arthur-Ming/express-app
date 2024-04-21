@@ -5,13 +5,15 @@ import {
   BlogOutputData,
   BlogOutputDataWithPagination,
   BlogsQueryParams,
+} from './types/interfaces';
+import { httpStatutes } from '../../common/httpStatutes';
+import { BlogsService } from './blogs.service';
+import {
   ParamsId,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-} from './interfaces';
-import { httpStatutes } from '../../common/httpStatutes';
-import { BlogsService } from './blogs.service';
+} from './types/types';
 
 const blogsRepository = new BlogsRepository();
 const blogsService = new BlogsService();

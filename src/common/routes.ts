@@ -1,8 +1,4 @@
-enum resources {
-  base = '/',
-  blogs = 'blogs',
-  posts = 'posts',
-}
+import { resources } from './types/enum';
 
 export default {
   base: resources.base,

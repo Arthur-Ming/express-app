@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
-import { PostInputData, PostsPaginationParamsForDB } from './interfaces';
+import { PostInputData, PostsPaginationParams } from './types/interfaces';
 import { postCollection } from '../../db/post.collection';
 
 export class PostsRepository {
@@ -12,11 +12,11 @@ export class PostsRepository {
       : {};
   };
 
-  getTotalCount = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
+  getTotalCount = async (queryParams: PostsPaginationParams, blogId?: string) => {
     return await postCollection.countDocuments(this.filter(blogId));
   };
 
-  find = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
+  find = async (queryParams: PostsPaginationParams, blogId?: string) => {
     return await postCollection
       .find(this.filter(blogId))
       .sort(queryParams.sortBy, queryParams.sortDirection)

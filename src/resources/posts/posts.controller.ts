@@ -1,20 +1,26 @@
 import { Request, Response } from 'express';
 import {
-  ParamsId,
   PostInputData,
   PostInputDataForSpecificBlog,
   PostOutputData,
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody,
-} from './interfaces';
+  PostsPaginationParams,
+} from './types/interfaces';
 import { PostsRepository } from './posts.repository';
 import { httpStatutes } from '../../common/httpStatutes';
 import { PostsService } from './posts.service';
+import {
+  ParamsId,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from './types/types';
 
 const postsRepository = new PostsRepository();
 const postsService = new PostsService();
-export const getPosts = async (req: Request, res: Response) => {
+export const getPosts = async (
+  req: Request<{ blogId: string }, {}, {}, PostsPaginationParams>,
+  res: Response
+) => {
   const posts = await postsService.findByQueryParams(req.query, req.params.blogId);
   res.status(httpStatutes.OK_200).json(posts);
 };

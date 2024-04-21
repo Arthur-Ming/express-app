@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { PostsQueryParamsEnum, PostsSortDirection } from './enum';
 
 export interface PostInputDataForSpecificBlog {
   title: string;
@@ -19,18 +19,12 @@ export interface PostOutputData {
   blogName: string;
   createdAt: Date;
 }
-export interface PostsPaginationParams {
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  pageNumber?: number;
-  pageSize?: number;
-}
 
-export interface PostsPaginationParamsForDB {
-  sortBy: string;
-  sortDirection: 'asc' | 'desc';
-  pageNumber: number;
-  pageSize: number;
+export interface PostsPaginationParams {
+  [PostsQueryParamsEnum.sortBy]: string;
+  [PostsQueryParamsEnum.sortDirection]: PostsSortDirection;
+  [PostsQueryParamsEnum.pageNumber]: number;
+  [PostsQueryParamsEnum.pageSize]: number;
 }
 
 export interface PostOutputDataWithPagination {
@@ -40,11 +34,6 @@ export interface PostOutputDataWithPagination {
   totalCount: number;
   items: PostOutputData[];
 }
-
-export type RequestWithBody<T> = Request<{}, {}, T>;
-export type RequestWithParams<T> = Request<T>;
-export type RequestWithParamsAndBody<T, Y> = Request<T, {}, Y>;
-export type ParamsId = { id: string };
 
 export interface PostsOutputDataWithPagination {
   pagesCount: number;

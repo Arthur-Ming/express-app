@@ -5,8 +5,7 @@ import {
   PostOutputData,
   PostOutputDataWithPagination,
   PostsPaginationParams,
-  PostsPaginationParamsForDB,
-} from './interfaces';
+} from './types/interfaces';
 import { WithId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
@@ -14,14 +13,6 @@ import { BlogsRepository } from '../blogs/blogs.repository';
 
 const postsRepository = new PostsRepository();
 const blogsRepository = new BlogsRepository();
-const setDefaultPaginationParams = (query: PostsPaginationParams): PostsPaginationParamsForDB => {
-  return {
-    pageNumber: query.pageNumber ? +query.pageNumber : 1,
-    pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
-    sortBy: query.sortBy ? query.sortBy : 'createdAt',
-    sortDirection: query.sortDirection ? query.sortDirection : 'desc',
-  };
-};
 
 export class PostsService {
   private mapToCreatePost = <T extends PostInputDataForSpecificBlog>(
@@ -65,10 +56,9 @@ export class PostsService {
   };
 
   findByQueryParams = async (
-    query: PostsPaginationParams,
+    queryParams: PostsPaginationParams,
     blogId?: string
   ): Promise<PostOutputDataWithPagination> => {
-    const queryParams = setDefaultPaginationParams(query);
     const items = await postsRepository.find(queryParams, blogId);
     const totalCount = await postsRepository.getTotalCount(queryParams, blogId);
 
