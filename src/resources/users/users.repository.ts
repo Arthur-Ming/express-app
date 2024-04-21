@@ -2,6 +2,7 @@ import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { userCollection } from '../../db/user.collection';
 import { ObjectId } from 'mongodb';
 import { UsersPaginationParams } from './types/interfaces';
+import { blogCollection } from '../../db/blog.collection';
 
 const filter = ({ searchEmailTerm, searchLoginTerm }: UsersPaginationParams) => {
   return {
@@ -48,5 +49,9 @@ export class UsersRepository {
       .limit(queryParams.pageSize)
       .toArray();
     return foundBlogs;
+  };
+  remove = async (userId: string): Promise<boolean> => {
+    const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(userId) });
+    return deleteResult.deletedCount === 1;
   };
 }

@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
 import { httpStatutes } from '../../common/httpStatutes';
-import { RequestWithBody } from '../blogs/types/types';
+import { ParamsId, RequestWithBody, RequestWithParams } from '../blogs/types/types';
 import {
   UserInputBody,
   UserOutputDataWithPagination,
   UsersPaginationParams,
 } from './types/interfaces';
 import { UsersService } from './users.service';
-import { BlogOutputDataWithPagination, BlogsQueryParams } from '../blogs/types/interfaces';
-export type RequestWithQuery<T> = Request<{}, {}, {}, T>;
+import { UsersRepository } from './users.repository';
+
 const usersService = new UsersService();
+const usersRepository = new UsersRepository();
 export const getUsers = async (
   req: Request<{}, {}, {}, UsersPaginationParams>,
   res: Response<UserOutputDataWithPagination>
@@ -28,6 +29,11 @@ export const addUser = async (req: RequestWithBody<UserInputBody>, res: Response
   res.status(httpStatutes.CREATED_201).json(addedUser);
 };
 
-export const deleteUser = (req: Request<{}, {}, {}, {}>, res: Response) => {
-  res.status(httpStatutes.OK_200).json('delete users');
+export const deleteUser = async (req: RequestWithParams<ParamsId>, res: Response) => {
+  const isDeleted = await usersRepository.remove(req.params.id);
+  if (!isDeleted) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
