@@ -29,3 +29,8 @@ export interface UsersPaginationParams {
   [UsersQueryParamsEnum.searchLoginTerm]: string;
   [UsersQueryParamsEnum.searchEmailTerm]: string;
 }
+
+export interface LoginUserBody {
+  loginOrEmail: string;
+  password: string;
+}
