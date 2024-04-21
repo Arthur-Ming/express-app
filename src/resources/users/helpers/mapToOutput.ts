@@ -1,5 +1,4 @@
 import { WithId } from 'mongodb';
-
 import { UserDbInterface } from '../../../db/dbTypes/user-db-interface';
 import { UserOutputData } from '../types/interfaces';
 
