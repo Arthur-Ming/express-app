@@ -7,4 +7,6 @@ export default {
   postForBlog: `/${resources.blogs}/:blogId/${resources.posts}`,
   blogs: `/${resources.blogs}`,
   blogById: `/${resources.blogs}/:id`,
+  users: `/${resources.users}`,
+  userById: `/${resources.users}/:id`,
 };
