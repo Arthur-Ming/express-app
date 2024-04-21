@@ -9,4 +9,5 @@ export default {
   blogById: `/${resources.blogs}/:id`,
   users: `/${resources.users}`,
   userById: `/${resources.users}/:id`,
+  authLogin: `/${resources.auth}/login`,
 };

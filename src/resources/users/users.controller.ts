@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { httpStatutes } from '../../common/httpStatutes';
 import { ParamsId, RequestWithBody, RequestWithParams } from '../blogs/types/types';
 import {
+  LoginUserBody,
   UserInputBody,
   UserOutputDataWithPagination,
   UsersPaginationParams,
@@ -33,6 +34,15 @@ export const deleteUser = async (req: RequestWithParams<ParamsId>, res: Response
   const isDeleted = await usersRepository.remove(req.params.id);
   if (!isDeleted) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+
+export const loginUser = async (req: RequestWithBody<LoginUserBody>, res: Response) => {
+  const user = await usersRepository.login(req.body);
+  if (!user) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);

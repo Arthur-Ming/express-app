@@ -1,7 +1,7 @@
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { userCollection } from '../../db/user.collection';
 import { ObjectId } from 'mongodb';
-import { UsersPaginationParams } from './types/interfaces';
+import { LoginUserBody, UsersPaginationParams } from './types/interfaces';
 import { blogCollection } from '../../db/blog.collection';
 
 const filter = ({ searchEmailTerm, searchLoginTerm }: UsersPaginationParams) => {
@@ -53,5 +53,28 @@ export class UsersRepository {
   remove = async (userId: string): Promise<boolean> => {
     const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(userId) });
     return deleteResult.deletedCount === 1;
+  };
+
+  login = async ({ loginOrEmail, password }: LoginUserBody) => {
+    const foundUser = await userCollection.findOne({
+      $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+      password: password,
+    });
+    if (!foundUser) {
+      return null;
+    }
+
+    return foundUser;
+  };
+
+  loginByEmail = async ({ loginOrEmail, password }: LoginUserBody) => {
+    const foundUser = await userCollection.findOne({
+      email: loginOrEmail,
+    });
+    if (!foundUser) {
+      return null;
+    }
+
+    return foundUser;
   };
 }
