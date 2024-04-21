@@ -19,7 +19,7 @@ export const postsForSpecificBlogInputValidation = [
 ];
 
 export const postsForSpecificBlogIdValidation = [
-  param('blogId').custom(async (blogId, { req }) => {
+  param('blogId').custom(async (blogId) => {
     const blog = await blogsRepository.findById(blogId);
 
     if (!blog) {

@@ -17,13 +17,12 @@ export class PostsRepository {
   };
 
   find = async (queryParams: PostsPaginationParamsForDB, blogId?: string) => {
-    const foundPosts = await postCollection
+    return await postCollection
       .find(this.filter(blogId))
       .sort(queryParams.sortBy, queryParams.sortDirection)
       .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
       .limit(queryParams.pageSize)
       .toArray();
-    return foundPosts;
   };
 
   findById = async (postId: string) => {
