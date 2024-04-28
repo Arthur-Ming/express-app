@@ -4,4 +4,5 @@ export enum resources {
   posts = 'posts',
   users = 'users',
   auth = 'auth',
+  comments = 'comments',
 }
