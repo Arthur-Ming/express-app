@@ -5,6 +5,7 @@ import blogsRouter from './resources/blogs/blogs.routes';
 import { httpStatutes } from './common/httpStatutes';
 import usersRouter from './resources/users/users.routes';
 import commentsRouter from './resources/comments/comments.routes';
+import authRouter from './resources/auth/auth.routes';
 
 export const app = express();
 
@@ -17,6 +18,7 @@ app.delete('/testing/all-data', async (req: Request, res: Response) => {
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 });
 
+app.use(authRouter);
 app.use(blogsRouter);
 app.use(postsRouter);
 app.use(usersRouter);

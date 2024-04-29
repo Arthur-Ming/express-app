@@ -67,6 +67,17 @@ export class UsersRepository {
     return foundUser;
   };
 
+  getUserByLoginOrEmail = async (loginOrEmail: string) => {
+    const foundUser = await userCollection.findOne({
+      $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+    });
+    if (!foundUser) {
+      return null;
+    }
+
+    return foundUser;
+  };
+
   loginByEmail = async ({ loginOrEmail, password }: LoginUserBody) => {
     const foundUser = await userCollection.findOne({
       email: loginOrEmail,

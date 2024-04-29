@@ -12,7 +12,6 @@ const usersRouter = Router();
 // @ts-ignore
 usersRouter.get(routes.users, checkAuthorization, usersQueryParamsValidation, getUsers);
 usersRouter.post(routes.users, checkAuthorization, usersInputBodyValidation, addUser);
-usersRouter.post(routes.authLogin, loginBodyValidation, loginUser);
 usersRouter.delete(routes.userById, checkAuthorization, paramsIdValidation, deleteUser);
 
 export default usersRouter;

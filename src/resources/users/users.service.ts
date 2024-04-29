@@ -6,11 +6,17 @@ import {
 import { mapToCreateUser } from './helpers/mapToCreateUser';
 import { UsersRepository } from './users.repository';
 import { mapToOutput } from './helpers/mapToOutput';
-import { BlogOutputDataWithPagination, BlogsQueryParams } from '../blogs/types/interfaces';
+import bcrypt from 'bcrypt';
+import config from '../../common/config';
 
 const usersRepository = new UsersRepository();
 export class UsersService {
   addUser = async (input: UserInputBody) => {
+    console.log(input.password);
+    const salt = await bcrypt.genSalt(config.saltRounds);
+    const hash = await bcrypt.hash(input.password, salt);
+    console.log(hash);
+    input.password = hash;
     const newUser = mapToCreateUser(input);
     const { id: addedUserId } = await usersRepository.add(newUser);
     const addedUser = await usersRepository.findById(addedUserId);
