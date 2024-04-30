@@ -4,7 +4,7 @@ import { httpStatutes } from '../common/httpStatutes';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AccessTokenPayload } from '../resources/auth/types/interfaces';
 
-export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
+export const checkByJWTAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
 
   if (!auth) {
@@ -25,4 +25,20 @@ export const checkAuthorization = (req: Request, res: Response, next: NextFuncti
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
+};
+
+export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
+  const auth = req.headers['authorization'];
+
+  if (!auth) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+    return;
+  }
+
+  if ('Basic ' + btoa(config.adminAuth) !== auth) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+    return;
+  }
+
+  next();
 };
