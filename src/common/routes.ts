@@ -14,4 +14,5 @@ export default {
   comments: `/${resources.comments}`,
   commentById: `/${resources.comments}/:id`,
   commentBySpecifiedId: `/${resources.comments}/:commentId`,
+  commentBySpecifiedPostId: `/${resources.posts}/:postId/comments`,
 };

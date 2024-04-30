@@ -4,13 +4,29 @@ import {
   addComment,
   deleteComment,
   getCommentById,
+  getCommentForSpecifiedPostId,
   updateComment,
-} from './types/comments.controller';
+} from './comments.controller';
+import { commentInputBodyValidation } from './commentsValidation/commentInputBodyValidation';
+import { checkByJWTAuthorization } from '../../utils/authorization';
+import { paramsPostIdValidation } from './commentsValidation/paramsPostIdValidation';
+import { commentsQueryParamsValidation } from './commentsValidation/commentsQueryParamsValidation';
 
 const commentsRouter = Router();
 
-commentsRouter.get(routes.commentById, getCommentById);
-commentsRouter.post(routes.comments, addComment);
+commentsRouter.get(
+  routes.commentBySpecifiedPostId,
+  paramsPostIdValidation,
+  commentsQueryParamsValidation,
+  getCommentForSpecifiedPostId
+);
+commentsRouter.post(
+  routes.commentBySpecifiedPostId,
+  checkByJWTAuthorization,
+  paramsPostIdValidation,
+  commentInputBodyValidation,
+  addComment
+);
 commentsRouter.put(routes.commentBySpecifiedId, updateComment);
 commentsRouter.delete(routes.commentBySpecifiedId, deleteComment);
 
