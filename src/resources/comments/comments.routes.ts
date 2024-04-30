@@ -11,6 +11,8 @@ import { commentInputBodyValidation } from './commentsValidation/commentInputBod
 import { checkByJWTAuthorization } from '../../utils/authorization';
 import { paramsPostIdValidation } from './commentsValidation/paramsPostIdValidation';
 import { commentsQueryParamsValidation } from './commentsValidation/commentsQueryParamsValidation';
+import { paramsIdValidation } from './commentsValidation/paramsIdValidation';
+import { paramsSpecifiedIdValidation } from './commentsValidation/paramsSpecifiedIdValidation';
 
 const commentsRouter = Router();
 
@@ -20,6 +22,7 @@ commentsRouter.get(
   commentsQueryParamsValidation,
   getCommentForSpecifiedPostId
 );
+commentsRouter.get(routes.commentById, paramsIdValidation, getCommentById);
 commentsRouter.post(
   routes.commentBySpecifiedPostId,
   checkByJWTAuthorization,
@@ -27,7 +30,18 @@ commentsRouter.post(
   commentInputBodyValidation,
   addComment
 );
-commentsRouter.put(routes.commentBySpecifiedId, updateComment);
-commentsRouter.delete(routes.commentBySpecifiedId, deleteComment);
+commentsRouter.put(
+  routes.commentBySpecifiedId,
+  checkByJWTAuthorization,
+  paramsSpecifiedIdValidation,
+  commentInputBodyValidation,
+  updateComment
+);
+commentsRouter.delete(
+  routes.commentBySpecifiedId,
+  checkByJWTAuthorization,
+  paramsSpecifiedIdValidation,
+  deleteComment
+);
 
 export default commentsRouter;

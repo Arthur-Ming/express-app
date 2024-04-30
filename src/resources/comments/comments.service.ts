@@ -9,7 +9,6 @@ import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId, WithId } from 'mongodb';
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { UsersRepository } from '../users/users.repository';
-import { PostOutputDataWithPagination, PostsPaginationParams } from '../posts/types/interfaces';
 
 const commentsRepository = new CommentsRepository();
 const usersRepository = new UsersRepository();
@@ -69,5 +68,12 @@ export class CommentsService {
       totalCount: totalCount,
       items: items.map((item) => this.mapToOutputComment(item)),
     };
+  };
+  getById = async (id: string) => {
+    const comment = await commentsRepository.getCommentById(id);
+    if (!comment) {
+      return null;
+    }
+    return this.mapToOutputComment(comment);
   };
 }

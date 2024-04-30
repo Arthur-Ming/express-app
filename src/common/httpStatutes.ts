@@ -6,4 +6,5 @@ export enum httpStatutes {
   'NOT_FOUND_404' = 404,
   'UNAUTHORIZED_401' = 401,
   'INTERNAL_SERVER_ERROR' = 500,
+  'Forbidden_403' = 403,
 }
