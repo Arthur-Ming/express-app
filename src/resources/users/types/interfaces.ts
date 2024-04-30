@@ -8,9 +8,9 @@ export interface UserOutputData {
 }
 
 export interface UserInputBody {
-  [UsersBodyFieldsEnum.login]: string;
-  [UsersBodyFieldsEnum.password]: string;
-  [UsersBodyFieldsEnum.email]: string;
+  login: string;
+  password: string;
+  email: string;
 }
 
 export interface UserOutputDataWithPagination {

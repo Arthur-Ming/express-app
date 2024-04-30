@@ -10,4 +10,8 @@ export default {
   users: `/${resources.users}`,
   userById: `/${resources.users}/:id`,
   authLogin: `/${resources.auth}/login`,
+  authMe: `/${resources.auth}/me`,
+  comments: `/${resources.comments}`,
+  commentById: `/${resources.comments}/:id`,
+  commentBySpecifiedId: `/${resources.comments}/:commentId`,
 };
