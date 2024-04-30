@@ -32,7 +32,7 @@ export const addComment = async (
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(httpStatutes.OK_200).json(addedComment);
+  res.status(httpStatutes.CREATED_201).json(addedComment);
 };
 export const updateComment = async (req: Request, res: Response) => {
   // const users = await usersService.findByQueryParams(req.query as UsersPaginationParams);
