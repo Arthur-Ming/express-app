@@ -3,11 +3,17 @@ import { Request, Response } from 'express';
 import { httpStatutes } from '../../common/httpStatutes';
 import { CommentsService } from './comments.service';
 import { CommentsInputBody, CommentsPaginationParams } from './types/interfaces';
+import { CommentsRepository } from './comments.repository';
 
 const commentsService = new CommentsService();
-export const getCommentById = async (req: Request, res: Response) => {
-  // const users = await usersService.findByQueryParams(req.query as UsersPaginationParams);
-  res.status(httpStatutes.OK_200).json('get comments');
+const commentsRepository = new CommentsRepository();
+export const getCommentById = async (req: Request<{ id: string }>, res: Response) => {
+  const comment = await commentsService.getById(req.params.id);
+  if (!comment) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.status(httpStatutes.OK_200).json(comment);
 };
 
 export const getCommentForSpecifiedPostId = async (
@@ -34,9 +40,16 @@ export const addComment = async (
   }
   res.status(httpStatutes.CREATED_201).json(addedComment);
 };
-export const updateComment = async (req: Request, res: Response) => {
-  // const users = await usersService.findByQueryParams(req.query as UsersPaginationParams);
-  res.status(httpStatutes.OK_200).json('update comments');
+export const updateComment = async (
+  req: Request<{ commentId: string }, {}, CommentsInputBody>,
+  res: Response
+) => {
+  const isUpdated = await commentsRepository.update(req.params.commentId, req.body);
+  if (!isUpdated) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 
 export const deleteComment = async (req: Request, res: Response) => {

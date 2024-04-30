@@ -29,7 +29,7 @@ export const checkByJWTAuthorization = (req: Request, res: Response, next: NextF
 
 export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
-
+  console.log(auth);
   if (!auth) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;

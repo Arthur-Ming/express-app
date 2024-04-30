@@ -1,8 +1,8 @@
 import { commentsCollection } from '../../db/comments.collection';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId } from 'mongodb';
-import { CommentsPaginationParams } from './types/interfaces';
-import { PostsPaginationParams } from '../posts/types/interfaces';
+import { CommentsInputBody, CommentsPaginationParams } from './types/interfaces';
+import { PostInputData, PostsPaginationParams } from '../posts/types/interfaces';
 import { postCollection } from '../../db/post.collection';
 
 export class CommentsRepository {
@@ -33,5 +33,21 @@ export class CommentsRepository {
     }
 
     return foundComment;
+  };
+  update = async (commentId: string, input: CommentsInputBody): Promise<boolean> => {
+    const updateResult = await commentsCollection.updateOne(
+      { _id: new ObjectId(commentId) },
+      {
+        $set: {
+          content: input.content,
+        },
+      }
+    );
+    return updateResult.matchedCount === 1;
+  };
+
+  remove = async (commentId: string): Promise<boolean> => {
+    const deleteResult = await commentsCollection.deleteOne({ _id: new ObjectId(commentId) });
+    return deleteResult.deletedCount === 1;
   };
 }
