@@ -78,10 +78,8 @@ export class UsersRepository {
     return foundUser;
   };
 
-  loginByEmail = async ({ loginOrEmail, password }: LoginUserBody) => {
-    const foundUser = await userCollection.findOne({
-      email: loginOrEmail,
-    });
+  getUserById = async (userId: string) => {
+    const foundUser = await userCollection.findOne({ _id: new ObjectId(userId) });
     if (!foundUser) {
       return null;
     }

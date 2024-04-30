@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import routes from '../../common/routes';
-import { addUser, deleteUser, getUsers, loginUser } from './users.controller';
+import { addUser, deleteUser, getUsers } from './users.controller';
 import { usersInputBodyValidation } from './usersValidation/usersInputBodyValidation';
 import { checkAuthorization } from '../../utils/authorization';
 import { usersQueryParamsValidation } from './usersValidation/usersQueryParamsValidation';
