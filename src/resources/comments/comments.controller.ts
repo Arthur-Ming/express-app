@@ -52,7 +52,11 @@ export const updateComment = async (
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 
-export const deleteComment = async (req: Request, res: Response) => {
-  // const users = await usersService.findByQueryParams(req.query as UsersPaginationParams);
-  res.status(httpStatutes.OK_200).json('delete comments');
+export const deleteComment = async (req: Request<{ commentId: string }>, res: Response) => {
+  const isDeleted = await commentsRepository.remove(req.params.commentId);
+  if (!isDeleted) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
