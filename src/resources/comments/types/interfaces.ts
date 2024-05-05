@@ -1,8 +1,11 @@
 import { CommentsSortDirection } from './enum';
+import { CommentsDbInterface } from '../../../db/dbTypes/comments-db-interface';
+import { UserDbInterface } from '../../../db/dbTypes/user-db-interface';
+import { WithId } from 'mongodb';
 
-interface CommentatorInfo {
+export interface CommentatorInfo {
   userId: string;
-  userLogin: string;
+  userLogin: string | null;
 }
 
 export interface CommentsOutputData {
@@ -29,10 +32,6 @@ export interface CommentsPaginationParams {
   pageSize: number;
 }
 
-export interface CommentsOutputDataWithPagination {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: CommentsOutputData[];
+export interface CommentsJoinedCommentatorInfoDB extends WithId<CommentsDbInterface> {
+  login?: string;
 }

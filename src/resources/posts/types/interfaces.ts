@@ -1,4 +1,7 @@
 import { PostsQueryParamsEnum, PostsSortDirection } from './enum';
+import { WithId } from 'mongodb';
+import { PostDbInterface } from '../../../db/dbTypes/post-db-interface';
+import { BlogDbInterface } from '../../../db/dbTypes/blog-db-interface';
 
 export interface PostInputDataForSpecificBlog {
   title: string;
@@ -27,18 +30,6 @@ export interface PostsPaginationParams {
   [PostsQueryParamsEnum.pageSize]: number;
 }
 
-export interface PostOutputDataWithPagination {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: PostOutputData[];
-}
-
-export interface PostsOutputDataWithPagination {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: PostOutputData[];
+export interface PostJoinedBlogDB extends WithId<PostDbInterface> {
+  blogName: BlogDbInterface['name'];
 }

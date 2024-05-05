@@ -10,14 +10,14 @@ export const paramSpecifiedIdCheckErrorsMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const comment = await commentsRepository.getCommentById(req.params.commentId);
+  const comment = await commentsRepository.findCommentById(req.params.commentId);
 
   if (!comment) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
 
-  if (comment.commentatorInfo.userId.toString() !== res.locals.userId) {
+  if (comment.userId.toString() !== res.locals.userId) {
     res.sendStatus(httpStatutes.Forbidden_403);
     return;
   }

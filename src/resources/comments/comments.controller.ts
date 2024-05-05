@@ -1,14 +1,15 @@
 import { Request, Response } from 'express';
-
 import { httpStatutes } from '../../common/httpStatutes';
 import { CommentsService } from './comments.service';
 import { CommentsInputBody, CommentsPaginationParams } from './types/interfaces';
 import { CommentsRepository } from './comments.repository';
+import { CommentsQueryRepo } from './comments.queryRepo';
 
 const commentsService = new CommentsService();
 const commentsRepository = new CommentsRepository();
+const commentsQueryRepo = new CommentsQueryRepo();
 export const getCommentById = async (req: Request<{ id: string }>, res: Response) => {
-  const comment = await commentsService.getById(req.params.id);
+  const comment = await commentsQueryRepo.findById(req.params.id);
   if (!comment) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
@@ -20,7 +21,7 @@ export const getCommentForSpecifiedPostId = async (
   req: Request<{ postId: string }, {}, {}, CommentsPaginationParams>,
   res: Response
 ) => {
-  const comments = await commentsService.findByQueryParams(req.query, req.params.postId);
+  const comments = await commentsQueryRepo.find(req.query, req.params.postId);
 
   res.status(httpStatutes.OK_200).json(comments);
 };

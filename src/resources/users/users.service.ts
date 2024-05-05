@@ -1,13 +1,10 @@
-import {
-  UserInputBody,
-  UserOutputDataWithPagination,
-  UsersPaginationParams,
-} from './types/interfaces';
+import { UserInputBody, UserOutputData, UsersPaginationParams } from './types/interfaces';
 import { mapToCreateUser } from './helpers/mapToCreateUser';
 import { UsersRepository } from './users.repository';
 import { mapToOutput } from './helpers/mapToOutput';
 import bcrypt from 'bcrypt';
 import config from '../../common/config';
+import { Pagination } from '../../common/types/interfaces';
 
 const usersRepository = new UsersRepository();
 export class UsersService {
@@ -24,7 +21,7 @@ export class UsersService {
   };
   findByQueryParams = async (
     queryParams: UsersPaginationParams
-  ): Promise<UserOutputDataWithPagination> => {
+  ): Promise<Pagination<UserOutputData[]>> => {
     const items = await usersRepository.find(queryParams);
     const totalCount = await usersRepository.getTotalCount(queryParams);
 

@@ -1,9 +1,4 @@
-import {
-  CommentsOutputData,
-  CommentsOutputDataWithPagination,
-  CommentsPaginationParams,
-  CreateCommentsBody,
-} from './types/interfaces';
+import { CommentsOutputData, CreateCommentsBody } from './types/interfaces';
 import { CommentsRepository } from './comments.repository';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId, WithId } from 'mongodb';
@@ -20,21 +15,22 @@ export class CommentsService {
     return {
       content: input.content,
       postId: new ObjectId(input.postId),
-      commentatorInfo: {
-        userId: user._id,
-        userLogin: user.login,
-      },
+      userId: user._id,
       createdAt: new Date(),
     };
   };
-  private mapToOutputComment = (comment: WithId<CommentsDbInterface>): CommentsOutputData => {
+
+  private mapToOutput = (
+    comment: WithId<CommentsDbInterface>,
+    user: WithId<UserDbInterface>
+  ): CommentsOutputData => {
     return {
       id: comment._id.toString(),
       content: comment.content,
       createdAt: comment.createdAt,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId.toString(),
-        userLogin: comment.commentatorInfo.userLogin,
+        userLogin: user.login,
+        userId: user._id.toString(),
       },
     };
   };
@@ -45,35 +41,12 @@ export class CommentsService {
     }
     const newComment = this.mapToCreateComment(input, user);
     const { id: commentId } = await commentsRepository.add(newComment);
-    const comment = await commentsRepository.getCommentById(commentId);
+    const comment = await commentsRepository.findCommentById(commentId);
 
     if (!comment) {
       return null;
     }
 
-    return this.mapToOutputComment(comment);
-  };
-
-  findByQueryParams = async (
-    queryParams: CommentsPaginationParams,
-    postId: string
-  ): Promise<CommentsOutputDataWithPagination> => {
-    const items = await commentsRepository.find(queryParams, postId);
-    const totalCount = await commentsRepository.getTotalCount(postId);
-
-    return {
-      pagesCount: Math.ceil(totalCount / queryParams.pageSize),
-      page: queryParams.pageNumber,
-      pageSize: queryParams.pageSize,
-      totalCount: totalCount,
-      items: items.map((item) => this.mapToOutputComment(item)),
-    };
-  };
-  getById = async (id: string) => {
-    const comment = await commentsRepository.getCommentById(id);
-    if (!comment) {
-      return null;
-    }
-    return this.mapToOutputComment(comment);
+    return this.mapToOutput(comment, user);
   };
 }

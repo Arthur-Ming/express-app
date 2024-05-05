@@ -5,6 +5,5 @@ export interface PostDbInterface {
   shortDescription: string;
   content: string;
   blogId: ObjectId;
-  blogName: string;
   createdAt: Date;
 }
