@@ -8,4 +8,6 @@ export default {
   saltRounds: 4,
   jwtSecret: process.env.JWT_SECRET || 'secret',
   jwtExpiresIn: '6h',
+  email: process.env.EMAIL || '',
+  emailPassword: process.env.EMAIL_PASSWORD || '',
 };
