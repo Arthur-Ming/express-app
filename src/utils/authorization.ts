@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import config from '../common/config';
 import { httpStatutes } from '../common/httpStatutes';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AccessTokenPayload } from '../resources/auth/types/interfaces';
 
 export const checkByJWTAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
@@ -27,9 +26,9 @@ export const checkByJWTAuthorization = (req: Request, res: Response, next: NextF
   }
 };
 
-export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
+export const checkBasicAuthorization = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
-  console.log(auth);
+
   if (!auth) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;

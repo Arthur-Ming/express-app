@@ -34,6 +34,7 @@ export class PostsRepository {
 
     return foundPost;
   };
+
   add = async (newPost: PostDbInterface) => {
     const insertOneResult = await postCollection.insertOne(newPost);
 

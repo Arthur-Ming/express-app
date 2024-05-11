@@ -14,14 +14,16 @@ import {
   RequestWithParams,
   RequestWithParamsAndBody,
 } from './types/types';
+import { PostsQueryRepo } from './posts.queryRepo';
 
 const postsRepository = new PostsRepository();
+const postsQueryRepo = new PostsQueryRepo();
 const postsService = new PostsService();
 export const getPosts = async (
-  req: Request<{ blogId: string }, {}, {}, PostsPaginationParams>,
+  req: Request<{ blogId?: string }, {}, {}, PostsPaginationParams>,
   res: Response
 ) => {
-  const posts = await postsService.findByQueryParams(req.query, req.params.blogId);
+  const posts = await postsQueryRepo.find(req.query, req.params.blogId);
   res.status(httpStatutes.OK_200).json(posts);
 };
 
@@ -29,7 +31,7 @@ export const getPostById = async (
   req: RequestWithParams<ParamsId>,
   res: Response<PostOutputData>
 ) => {
-  const foundPost = await postsService.findById(req.params.id);
+  const foundPost = await postsQueryRepo.findById(req.params.id);
   if (!foundPost) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;

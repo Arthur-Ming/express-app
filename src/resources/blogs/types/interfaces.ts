@@ -22,11 +22,3 @@ export interface BlogsQueryParams {
   [BlogsQueryParamsEnum.pageNumber]: number;
   [BlogsQueryParamsEnum.pageSize]: number;
 }
-
-export interface BlogOutputDataWithPagination {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: BlogOutputData[];
-}

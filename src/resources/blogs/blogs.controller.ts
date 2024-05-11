@@ -1,11 +1,6 @@
 import { Request, Response } from 'express';
 import { BlogsRepository } from './blogs.repository';
-import {
-  BlogInputData,
-  BlogOutputData,
-  BlogOutputDataWithPagination,
-  BlogsQueryParams,
-} from './types/interfaces';
+import { BlogInputData, BlogOutputData, BlogsQueryParams } from './types/interfaces';
 import { httpStatutes } from '../../common/httpStatutes';
 import { BlogsService } from './blogs.service';
 import {
@@ -14,12 +9,13 @@ import {
   RequestWithParams,
   RequestWithParamsAndBody,
 } from './types/types';
+import { Pagination } from '../../common/types/interfaces';
 
 const blogsRepository = new BlogsRepository();
 const blogsService = new BlogsService();
 export const getBlogs = async (
   req: Request<{}, {}, {}, BlogsQueryParams>,
-  res: Response<BlogOutputDataWithPagination>
+  res: Response<Pagination<BlogOutputData[]>>
 ) => {
   const blogs = await blogsService.findByQueryParams(req.query);
   res.status(httpStatutes.OK_200).json(blogs);

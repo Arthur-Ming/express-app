@@ -1,22 +1,9 @@
 import { commentsCollection } from '../../db/comments.collection';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId } from 'mongodb';
-import { CommentsInputBody, CommentsPaginationParams } from './types/interfaces';
-import { PostInputData, PostsPaginationParams } from '../posts/types/interfaces';
-import { postCollection } from '../../db/post.collection';
+import { CommentsInputBody } from './types/interfaces';
 
 export class CommentsRepository {
-  find = async (queryParams: CommentsPaginationParams, postId: string) => {
-    return await commentsCollection
-      .find({
-        postId: new ObjectId(postId),
-      })
-      .sort(queryParams.sortBy, queryParams.sortDirection)
-      .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
-      .limit(queryParams.pageSize)
-      .toArray();
-  };
-
   getTotalCount = async (postId: string) => {
     return await commentsCollection.countDocuments({ postId: new ObjectId(postId) });
   };
@@ -26,7 +13,7 @@ export class CommentsRepository {
     return { id: insertOneResult.insertedId.toString() };
   };
 
-  getCommentById = async (commentId: string) => {
+  findCommentById = async (commentId: string) => {
     const foundComment = await commentsCollection.findOne({ _id: new ObjectId(commentId) });
     if (!foundComment) {
       return null;
@@ -34,6 +21,7 @@ export class CommentsRepository {
 
     return foundComment;
   };
+
   update = async (commentId: string, input: CommentsInputBody): Promise<boolean> => {
     const updateResult = await commentsCollection.updateOne(
       { _id: new ObjectId(commentId) },

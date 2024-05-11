@@ -1,16 +1,16 @@
 import { BlogsRepository } from './blogs.repository';
-import { BlogInputData, BlogOutputDataWithPagination, BlogsQueryParams } from './types/interfaces';
-
+import { BlogInputData, BlogOutputData, BlogsQueryParams } from './types/interfaces';
 import { mapToOutput } from './helpers/mapToOutput';
 import { mapToCreateBlog } from './helpers/mapToCreateBlog';
 import { mapToUpdateBlog } from './helpers/mapToUpdateBlog';
+import { Pagination } from '../../common/types/interfaces';
 
 const blogsRepository = new BlogsRepository();
 
 export class BlogsService {
   findByQueryParams = async (
     queryParams: BlogsQueryParams
-  ): Promise<BlogOutputDataWithPagination> => {
+  ): Promise<Pagination<BlogOutputData[]>> => {
     const items = await blogsRepository.find(queryParams);
     const totalCount = await blogsRepository.getTotalCount(queryParams);
 

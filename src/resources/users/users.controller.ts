@@ -1,21 +1,16 @@
 import { Request, Response } from 'express';
 import { httpStatutes } from '../../common/httpStatutes';
 import { ParamsId, RequestWithBody, RequestWithParams } from '../blogs/types/types';
-import {
-  LoginUserBody,
-  UserInputBody,
-  UserOutputDataWithPagination,
-  UsersPaginationParams,
-} from './types/interfaces';
+import { UserInputBody, UserOutputData, UsersPaginationParams } from './types/interfaces';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
-import bcrypt from 'bcrypt';
+import { Pagination } from '../../common/types/interfaces';
 
 const usersService = new UsersService();
 const usersRepository = new UsersRepository();
 export const getUsers = async (
   req: Request<{}, {}, {}, UsersPaginationParams>,
-  res: Response<UserOutputDataWithPagination>
+  res: Response<Pagination<UserOutputData[]>>
 ) => {
   const users = await usersService.findByQueryParams(req.query as UsersPaginationParams);
   res.status(httpStatutes.OK_200).json(users);

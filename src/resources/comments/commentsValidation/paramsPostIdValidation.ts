@@ -5,7 +5,6 @@ import { PostsRepository } from '../../posts/posts.repository';
 const postsRepository = new PostsRepository();
 export const paramsPostIdValidation = [
   param('postId').isMongoId(),
-
   param('postId').custom(async (postId) => {
     const post = await postsRepository.findById(postId);
 

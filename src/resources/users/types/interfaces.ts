@@ -13,13 +13,13 @@ export interface UserInputBody {
   email: string;
 }
 
-export interface UserOutputDataWithPagination {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: UserOutputData[];
-}
+// export interface UserOutputDataWithPagination {
+//   pagesCount: number;
+//   page: number;
+//   pageSize: number;
+//   totalCount: number;
+//   items: UserOutputData[];
+// }
 
 export interface UsersPaginationParams {
   [UsersQueryParamsEnum.sortBy]: string;
