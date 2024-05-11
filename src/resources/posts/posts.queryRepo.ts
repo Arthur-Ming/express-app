@@ -42,6 +42,7 @@ export class PostsQueryRepo {
           content: 1,
           blogName: '$blogInfo.name',
           blogId: 1,
+          createdAt: 1,
         },
       },
     ];
