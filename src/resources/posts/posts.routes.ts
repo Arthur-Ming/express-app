@@ -8,7 +8,7 @@ import {
   getPosts,
   updatePost,
 } from './posts.controller';
-import { checkAuthorization } from '../../utils/authorization';
+import { checkBasicAuthorization } from '../../utils/authorization';
 import { postsForSpecificBlogIdValidation } from './postsValidation/postsForSpecificBlogIdValidation';
 import { postsInputBodyValidation } from './postsValidation/postsInputBodyValidation';
 import { postsQueryParamsValidation } from './postsValidation/postsQueryParamsValidation';
@@ -27,7 +27,7 @@ postsRouter.get(
 );
 postsRouter.post(
   routes.posts,
-  checkAuthorization,
+  checkBasicAuthorization,
   postsInputBlogIdValidation,
   postsInputBodyValidation,
   addPost
@@ -35,19 +35,19 @@ postsRouter.post(
 
 postsRouter.post(
   routes.postForBlog,
-  checkAuthorization,
+  checkBasicAuthorization,
   postsForSpecificBlogIdValidation,
   postsInputBodyValidation,
   addPostForSpecificBlog
 );
 postsRouter.put(
   routes.postById,
-  checkAuthorization,
+  checkBasicAuthorization,
   postParamsIdValidation,
   postsInputBlogIdValidation,
   postsInputBodyValidation,
   updatePost
 );
-postsRouter.delete(routes.postById, postParamsIdValidation, checkAuthorization, deletePost);
+postsRouter.delete(routes.postById, postParamsIdValidation, checkBasicAuthorization, deletePost);
 
 export default postsRouter;
