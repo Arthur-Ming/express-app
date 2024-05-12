@@ -66,6 +66,14 @@ export const sendEmail = async (req: Request, res: Response) => {
 };
 
 const authRepository = new AuthRepository();
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: config.email,
+    pass: config.emailPassword,
+  },
+});
 export const registration = async (req: RequestWithBody<UserInputBody>, res: Response) => {
   const doesUserExistByLogin = await usersRepository.getUserByLogin(req.body.login);
   if (doesUserExistByLogin) {
@@ -104,14 +112,6 @@ export const registration = async (req: RequestWithBody<UserInputBody>, res: Res
     }),
     isConfirmed: false,
     userId: new ObjectId(addedUser.id),
-  });
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: config.email,
-      pass: config.emailPassword,
-    },
   });
 
   const info = await transporter.sendMail({
@@ -189,15 +189,7 @@ export const registrationEmailResending = async (
     });
     return;
   }
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: config.email,
-      pass: config.emailPassword,
-    },
-  });
-
+  await authRepository.updateConfirmationCode(doesUserExistByEmail._id.toString(), code);
   const info = await transporter.sendMail({
     from: `"Arthur 👻" <${config.email}>`, // sender address
     to: req.body.email, // list of receivers
