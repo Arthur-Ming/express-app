@@ -12,6 +12,7 @@ export default {
   authLogin: `/${resources.auth}/login`,
   authRegistration: `/${resources.auth}/registration`,
   authRegistrationConfirmation: `/${resources.auth}/registration-confirmation`,
+  authRegistrationEmailResending: `/${resources.auth}/registration-email-resending`,
   authMe: `/${resources.auth}/me`,
   comments: `/${resources.comments}`,
   commentById: `/${resources.comments}/:id`,

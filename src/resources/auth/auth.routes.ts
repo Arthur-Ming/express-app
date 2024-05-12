@@ -6,6 +6,7 @@ import {
   authMe,
   registration,
   registrationConfirmation,
+  registrationEmailResending,
   sendEmail,
 } from './auth.controller';
 import { checkByJWTAuthorization } from '../../utils/authorization';
@@ -17,5 +18,6 @@ authRouter.get(routes.authMe, checkByJWTAuthorization, authMe);
 authRouter.post(routes.authLogin, loginBodyValidation, authLogin);
 authRouter.post(routes.authRegistration, usersInputBodyValidation, registration);
 authRouter.post(routes.authRegistrationConfirmation, registrationConfirmation);
+authRouter.post(routes.authRegistrationEmailResending, registrationEmailResending);
 
 export default authRouter;

@@ -11,7 +11,7 @@ import { UsersService } from '../users/users.service';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { ObjectId } from 'mongodb';
-import { RegistrationConfirmationBody } from './types/interfaces';
+import { RegistrationConfirmationBody, RegistrationEmailResendingBody } from './types/interfaces';
 
 const authService = new AuthService();
 const usersService = new UsersService();
@@ -145,6 +145,68 @@ export const registrationConfirmation = async (
     return;
   }
   await authRepository.setConfirmed(req.body.code);
+
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+
+export const registrationEmailResending = async (
+  req: RequestWithBody<RegistrationEmailResendingBody>,
+  res: Response
+) => {
+  const doesUserExistByEmail = await usersRepository.getUserByEmail(req.body.email);
+  if (!doesUserExistByEmail) {
+    res.status(httpStatutes.BAD_REQUEST_400).json({
+      errorsMessages: [
+        {
+          message: 'string',
+          field: 'email',
+        },
+      ],
+    });
+    return;
+  }
+  const confirm = await authRepository.findByUserId(doesUserExistByEmail._id.toString());
+  const code = uuidv4();
+  if (!confirm) {
+    const confirmation = authRepository.addEmailConfirmation({
+      confirmationCode: code,
+      expirationDate: add(new Date(), {
+        minutes: 30,
+      }),
+      isConfirmed: false,
+      userId: doesUserExistByEmail._id,
+    });
+  }
+
+  if (confirm?.isConfirmed) {
+    res.status(httpStatutes.BAD_REQUEST_400).json({
+      errorsMessages: [
+        {
+          message: 'string',
+          field: 'email',
+        },
+      ],
+    });
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: config.email,
+      pass: config.emailPassword,
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from: `"Arthur 👻" <${config.email}>`, // sender address
+    to: req.body.email, // list of receivers
+    subject: 'Hello ✔', // Subject line
+    html: ` <h1>Thank for your registration</h1>
+ <p>To finish registration please follow the link below:
+     <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
+ </p>`, // html body
+  });
 
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
