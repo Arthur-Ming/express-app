@@ -9,10 +9,9 @@ import { Pagination } from '../../common/types/interfaces';
 const usersRepository = new UsersRepository();
 export class UsersService {
   addUser = async (input: UserInputBody) => {
-    console.log(input.password);
     const salt = await bcrypt.genSalt(config.saltRounds);
     const hash = await bcrypt.hash(input.password, salt);
-    console.log(hash);
+
     input.password = hash;
     const newUser = mapToCreateUser(input);
     const { id: addedUserId } = await usersRepository.add(newUser);
