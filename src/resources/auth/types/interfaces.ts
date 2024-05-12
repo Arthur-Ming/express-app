@@ -21,3 +21,6 @@ export interface EmailConfirmation {
 export interface RegistrationConfirmationBody {
   code: string;
 }
+export interface RegistrationEmailResendingBody {
+  email: string;
+}

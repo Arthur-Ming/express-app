@@ -21,6 +21,16 @@ export class AuthRepository {
     return confirmation;
   };
 
+  findByUserId = async (userId: string) => {
+    const confirmation = await emailConfirmationCollection.findOne({
+      userId: new ObjectId(userId),
+    });
+    if (!confirmation) {
+      return null;
+    }
+    return confirmation;
+  };
+
   setConfirmed = async (confirmationCode: string) => {
     const updateResult = await emailConfirmationCollection.updateOne(
       {
