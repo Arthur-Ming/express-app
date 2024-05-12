@@ -67,11 +67,20 @@ export const sendEmail = async (req: Request, res: Response) => {
 
 const authRepository = new AuthRepository();
 export const registration = async (req: RequestWithBody<UserInputBody>, res: Response) => {
-  const doesUserExist = await usersRepository.getUserByLoginOrEmailAlt(
-    req.body.login,
-    req.body.email
-  );
-  if (doesUserExist) {
+  const doesUserExistByLogin = await usersRepository.getUserByLogin(req.body.login);
+  if (doesUserExistByLogin) {
+    res.status(httpStatutes.BAD_REQUEST_400).json({
+      errorsMessages: [
+        {
+          message: 'string',
+          field: 'login',
+        },
+      ],
+    });
+    return;
+  }
+  const doesUserExistByEmail = await usersRepository.getUserByEmail(req.body.email);
+  if (doesUserExistByEmail) {
     res.status(httpStatutes.BAD_REQUEST_400).json({
       errorsMessages: [
         {
@@ -129,7 +138,7 @@ export const registrationConfirmation = async (
       errorsMessages: [
         {
           message: 'string',
-          field: 'string',
+          field: 'code',
         },
       ],
     });
