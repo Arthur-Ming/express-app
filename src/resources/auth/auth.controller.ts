@@ -3,6 +3,7 @@ import { httpStatutes } from '../../common/httpStatutes';
 import { AuthService } from './auth.service';
 import config from '../../common/config';
 import nodemailer from 'nodemailer';
+import { v4 as uuidv4 } from 'uuid';
 const authService = new AuthService();
 
 export const authLogin = async (req: Request, res: Response) => {
@@ -38,11 +39,12 @@ export const sendEmail = async (req: Request, res: Response) => {
       pass: config.emailPassword,
     },
   });
+  const code = uuidv4();
   const info = await transporter.sendMail({
     from: `"Arthur 👻" <${config.email}>`, // sender address
     to: 'arthurming7@gmail.com', // list of receivers
     subject: 'Hello ✔', // Subject line
-    html: '<b>Hello world?</b>', // html body
+    html: `<b>Your code: ${code}</b>`, // html body
   });
   console.log(info);
   res.status(httpStatutes.OK_200).json('email');
