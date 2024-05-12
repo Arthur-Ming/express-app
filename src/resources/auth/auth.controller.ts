@@ -76,7 +76,7 @@ export const registration = async (req: RequestWithBody<UserInputBody>, res: Res
       errorsMessages: [
         {
           message: 'string',
-          field: 'string',
+          field: 'email',
         },
       ],
     });
