@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { ObjectId } from 'mongodb';
+import { RegistrationConfirmationBody } from './types/interfaces';
 
 const authService = new AuthService();
 const usersService = new UsersService();
@@ -101,6 +102,21 @@ export const registration = async (req: RequestWithBody<UserInputBody>, res: Res
      <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
  </p>`, // html body
   });
+
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+
+export const registrationConfirmation = async (
+  req: RequestWithBody<RegistrationConfirmationBody>,
+  res: Response
+) => {
+  const confirmation = await authRepository.findByConfirmationCode(req.body.code);
+
+  if (!confirmation || confirmation.isConfirmed || confirmation.expirationDate < new Date()) {
+    res.sendStatus(httpStatutes.BAD_REQUEST_400);
+    return;
+  }
+  await authRepository.setConfirmed(req.body.code);
 
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };

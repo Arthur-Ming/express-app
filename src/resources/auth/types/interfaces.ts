@@ -17,3 +17,7 @@ export interface EmailConfirmation {
   expirationDate: Date;
   isConfirmed: boolean;
 }
+
+export interface RegistrationConfirmationBody {
+  code: string;
+}

@@ -1,7 +1,13 @@
 import { Router } from 'express';
 import routes from '../../common/routes';
 import { loginBodyValidation } from '../users/usersValidation/loginBodyValidation';
-import { authLogin, authMe, registration, sendEmail } from './auth.controller';
+import {
+  authLogin,
+  authMe,
+  registration,
+  registrationConfirmation,
+  sendEmail,
+} from './auth.controller';
 import { checkByJWTAuthorization } from '../../utils/authorization';
 
 const authRouter = Router();
@@ -9,5 +15,6 @@ const authRouter = Router();
 authRouter.get(routes.authMe, checkByJWTAuthorization, authMe);
 authRouter.post(routes.authLogin, loginBodyValidation, authLogin);
 authRouter.post(routes.authRegistration, registration);
+authRouter.post(routes.authRegistrationConfirmation, registrationConfirmation);
 
 export default authRouter;
