@@ -67,9 +67,21 @@ export const sendEmail = async (req: Request, res: Response) => {
 
 const authRepository = new AuthRepository();
 export const registration = async (req: RequestWithBody<UserInputBody>, res: Response) => {
-  const date = add(new Date(), {
-    minutes: 30,
-  });
+  const doesUserExist = await usersRepository.getUserByLoginOrEmailAlt(
+    req.body.login,
+    req.body.email
+  );
+  if (doesUserExist) {
+    res.status(httpStatutes.BAD_REQUEST_400).json({
+      errorsMessages: [
+        {
+          message: 'string',
+          field: 'string',
+        },
+      ],
+    });
+    return;
+  }
   const addedUser = await usersService.addUser(req.body);
   if (!addedUser) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
@@ -113,7 +125,14 @@ export const registrationConfirmation = async (
   const confirmation = await authRepository.findByConfirmationCode(req.body.code);
 
   if (!confirmation || confirmation.isConfirmed || confirmation.expirationDate < new Date()) {
-    res.sendStatus(httpStatutes.BAD_REQUEST_400);
+    res.status(httpStatutes.BAD_REQUEST_400).json({
+      errorsMessages: [
+        {
+          message: 'string',
+          field: 'string',
+        },
+      ],
+    });
     return;
   }
   await authRepository.setConfirmed(req.body.code);
