@@ -189,14 +189,14 @@ export const registrationEmailResending = async (
     });
     return;
   }
-  // await authRepository.updateConfirmationCode(doesUserExistByEmail._id.toString(), code);
+  await authRepository.updateConfirmationCode(doesUserExistByEmail._id.toString(), code);
   const info = await transporter.sendMail({
     from: `"Arthur 👻" <${config.email}>`, // sender address
     to: req.body.email, // list of receivers
     subject: 'Hello ✔', // Subject line
     html: ` <h1>Thank for your registration</h1>
  <p>To finish registration please follow the link below:
-     <a href='https://somesite.com/confirm-email?code=${confirm?.confirmationCode}'>complete registration</a>
+     <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
  </p>`, // html body
   });
 
