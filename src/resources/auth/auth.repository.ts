@@ -44,4 +44,18 @@ export class AuthRepository {
     );
     return updateResult.matchedCount === 1;
   };
+
+  updateConfirmationCode = async (userId: string, newCode: string) => {
+    const updateResult = await emailConfirmationCollection.updateOne(
+      {
+        userId: new ObjectId(userId),
+      },
+      {
+        $set: {
+          confirmationCode: newCode,
+        },
+      }
+    );
+    return updateResult.matchedCount === 1;
+  };
 }
