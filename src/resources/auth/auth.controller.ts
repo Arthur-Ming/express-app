@@ -211,8 +211,15 @@ export const logout = async (req: Request, res: Response) => {
 
   try {
     const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
-    if (typeof payload !== 'string') {
-      await authService.logout(payload.userId);
+    if (typeof payload === 'string' || !payload?.userId) {
+      throw new Error();
+    }
+    const session = await sessionsService.findByUserId(payload.userId);
+    if (!session) {
+      throw new Error();
+    }
+    if (session.userId.toString() !== payload.userId) {
+      throw new Error();
     }
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
   } catch (err) {
