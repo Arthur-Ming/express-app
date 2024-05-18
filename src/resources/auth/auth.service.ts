@@ -7,8 +7,10 @@ import { AccessTokenPayload, AuthMeOutput } from './types/interfaces';
 import config from '../../common/config';
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { WithId } from 'mongodb';
+import { SessionsService } from '../sessions/sessions.service';
 
 const usersRepository = new UsersRepository();
+const sessionsService = new SessionsService();
 export class AuthService {
   private authMeOutputMap = (user: WithId<UserDbInterface>): AuthMeOutput => {
     return {
@@ -17,15 +19,19 @@ export class AuthService {
       email: user.email,
     };
   };
-  private genAccessToken = (payload: AccessTokenPayload) => {
+  private genToken = (
+    payload: AccessTokenPayload,
+    expiresIn: string,
+    secret = config.jwtSecret
+  ) => {
     try {
       const token = jwt.sign(
         {
           userId: payload.userId,
         },
-        config.jwtSecret,
+        secret,
         {
-          expiresIn: config.jwtExpiresIn,
+          expiresIn: expiresIn,
         }
       );
       return token;
@@ -39,6 +45,7 @@ export class AuthService {
       return {
         isLogin: false,
         accessToken: null,
+        refreshToken: null,
       };
     }
     const isLogin = await bcrypt.compare(body.password, user.password);
@@ -46,20 +53,40 @@ export class AuthService {
       return {
         isLogin: false,
         accessToken: null,
+        refreshToken: null,
       };
+    }
+    const userId = user._id.toString();
+    const refreshToken = this.genToken({ userId }, config.refreshTokenExpiresIn);
+    const accessToken = this.genToken({ userId }, config.accessTokenExpiresIn);
+    if (refreshToken) {
+      await sessionsService.setSession(userId, refreshToken);
     }
 
     return {
       isLogin: true,
-      accessToken: this.genAccessToken({ userId: user._id.toString() }),
+      accessToken,
+      refreshToken,
     };
+  };
+  logout = async (userId: string) => {
+    return await sessionsService.logout(userId);
+  };
+  refreshSession = async (userId: string) => {
+    const refreshToken = this.genToken({ userId }, config.refreshTokenExpiresIn);
+    const accessToken = this.genToken({ userId }, config.accessTokenExpiresIn);
+    if (refreshToken) {
+      await sessionsService.setSession(userId, refreshToken);
+    }
+
+    return { refreshToken, accessToken };
   };
   authMeById = async (userId: string) => {
     const user = await usersRepository.getUserById(userId);
     if (!user) {
       return null;
     }
-    console.log(user);
+
     return this.authMeOutputMap(user);
   };
 }

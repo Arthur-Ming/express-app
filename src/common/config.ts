@@ -7,7 +7,9 @@ export default {
   adminAuth: 'admin:qwerty',
   saltRounds: 4,
   jwtSecret: process.env.JWT_SECRET || 'secret',
-  jwtExpiresIn: '6h',
+  accessTokenExpiresIn: '10s',
+  refreshTokenExpiresIn: '20s',
   email: process.env.EMAIL || '',
   emailPassword: process.env.EMAIL_PASSWORD || '',
+  cookieSecure: false,
 };

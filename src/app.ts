@@ -6,9 +6,10 @@ import { httpStatutes } from './common/httpStatutes';
 import usersRouter from './resources/users/users.routes';
 import commentsRouter from './resources/comments/comments.routes';
 import authRouter from './resources/auth/auth.routes';
+import cookieParser from 'cookie-parser';
 
 export const app = express();
-
+app.use(cookieParser());
 const bodyParser = express.json();
 
 app.use(bodyParser);
