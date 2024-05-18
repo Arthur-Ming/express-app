@@ -10,6 +10,8 @@ export default {
   users: `/${resources.users}`,
   userById: `/${resources.users}/:id`,
   authLogin: `/${resources.auth}/login`,
+  authLogout: `/${resources.auth}/logout`,
+  authRefreshToken: `/${resources.auth}/refresh-token`,
   authRegistration: `/${resources.auth}/registration`,
   authRegistrationConfirmation: `/${resources.auth}/registration-confirmation`,
   authRegistrationEmailResending: `/${resources.auth}/registration-email-resending`,

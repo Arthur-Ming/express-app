@@ -12,23 +12,26 @@ import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { ObjectId } from 'mongodb';
 import { RegistrationConfirmationBody, RegistrationEmailResendingBody } from './types/interfaces';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { SessionsService } from '../sessions/sessions.service';
 
 const authService = new AuthService();
 const usersService = new UsersService();
 const usersRepository = new UsersRepository();
+const sessionsService = new SessionsService();
 
 export const authLogin = async (req: Request, res: Response) => {
-  const { isLogin, accessToken } = await authService.loginUser(req.body);
+  const { isLogin, accessToken, refreshToken } = await authService.loginUser(req.body);
 
   if (!isLogin) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
-  if (!accessToken) {
+  if (!accessToken || !refreshToken) {
     res.sendStatus(httpStatutes.INTERNAL_SERVER_ERROR);
     return;
   }
-
+  res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: config.cookieSecure });
   res.status(httpStatutes.OK_200).json({ accessToken });
 };
 
@@ -201,4 +204,44 @@ export const registrationEmailResending = async (
   });
 
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+
+export const logout = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  try {
+    const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
+    if (typeof payload !== 'string') {
+      await authService.logout(payload.userId);
+    }
+    res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+  } catch (err) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+    return;
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  try {
+    const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
+
+    if (typeof payload === 'string' || !payload?.userId) {
+      throw new Error();
+    }
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      await authService.refreshSession(payload.userId);
+
+    if (!newAccessToken || !newRefreshToken) {
+      res.sendStatus(httpStatutes.INTERNAL_SERVER_ERROR);
+      return;
+    }
+
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: config.cookieSecure });
+    res.status(httpStatutes.OK_200).json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+    return;
+  }
 };
