@@ -221,6 +221,7 @@ export const logout = async (req: Request, res: Response) => {
     if (session.refreshToken !== refreshToken) {
       throw new Error();
     }
+    await sessionsService.logout(payload.userId);
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
   } catch (err) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);

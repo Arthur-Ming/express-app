@@ -3,6 +3,7 @@ import { postCollection } from './post.collection';
 import { userCollection } from './user.collection';
 import { commentsCollection } from './comments.collection';
 import { emailConfirmationCollection } from './emailConformition.collection';
+import { sessionCollection } from './session.collections';
 
 export const dropCollections = async () => {
   await blogCollection.drop();
@@ -10,4 +11,5 @@ export const dropCollections = async () => {
   await userCollection.drop();
   await commentsCollection.drop();
   await emailConfirmationCollection.drop();
+  await sessionCollection.drop();
 };
