@@ -230,6 +230,15 @@ export const refreshToken = async (req: Request, res: Response) => {
     if (typeof payload === 'string' || !payload?.userId) {
       throw new Error();
     }
+
+    const session = await sessionsService.findByUserId(payload.userId);
+    if (!session) {
+      throw new Error();
+    }
+    if (session.userId.toString() !== payload.userId) {
+      throw new Error();
+    }
+
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await authService.refreshSession(payload.userId);
 
