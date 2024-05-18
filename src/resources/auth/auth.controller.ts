@@ -218,7 +218,7 @@ export const logout = async (req: Request, res: Response) => {
     if (!session) {
       throw new Error();
     }
-    if (session.userId.toString() !== payload.userId) {
+    if (session.refreshToken !== refreshToken) {
       throw new Error();
     }
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
@@ -242,7 +242,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     if (!session) {
       throw new Error();
     }
-    if (session.userId.toString() !== payload.userId) {
+    if (session.refreshToken !== refreshToken) {
       throw new Error();
     }
 
