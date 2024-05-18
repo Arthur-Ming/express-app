@@ -11,5 +11,5 @@ export default {
   refreshTokenExpiresIn: '20s',
   email: process.env.EMAIL || '',
   emailPassword: process.env.EMAIL_PASSWORD || '',
-  cookieSecure: false,
+  cookieSecure: true,
 };
