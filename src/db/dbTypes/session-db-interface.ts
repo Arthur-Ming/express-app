@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb';
 
 export interface SessionDbInterface {
-  refreshToken: string;
-  userId: ObjectId;
+  deviceId: ObjectId;
+  iat: number;
+  ip: string;
+  exp: number;
 }

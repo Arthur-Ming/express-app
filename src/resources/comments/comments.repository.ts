@@ -1,4 +1,4 @@
-import { commentsCollection } from '../../db/comments.collection';
+import { commentsCollection } from '../../db/collections/comments.collection';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId } from 'mongodb';
 import { CommentsInputBody } from './types/interfaces';

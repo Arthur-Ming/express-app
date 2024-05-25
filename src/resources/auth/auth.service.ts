@@ -1,16 +1,23 @@
 import { UsersRepository } from '../users/users.repository';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { LoginUserBody } from '../users/types/interfaces';
 
 import bcrypt from 'bcrypt';
-import { AccessTokenPayload, AuthMeOutput } from './types/interfaces';
+import {
+  AccessTokenPayload,
+  AuthMeOutput,
+  AuthUserInfo,
+  RefreshTokenPayload,
+} from './types/interfaces';
 import config from '../../common/config';
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { WithId } from 'mongodb';
 import { SessionsService } from '../sessions/sessions.service';
+import { DeviceRepository } from '../devices/device.repository';
 
 const usersRepository = new UsersRepository();
 const sessionsService = new SessionsService();
+const deviceRepository = new DeviceRepository();
 export class AuthService {
   private authMeOutputMap = (user: WithId<UserDbInterface>): AuthMeOutput => {
     return {
@@ -19,9 +26,9 @@ export class AuthService {
       email: user.email,
     };
   };
-  private genToken = (
+  private genAccessToken = (
     payload: AccessTokenPayload,
-    expiresIn: string,
+    expiresIn = config.accessTokenExpiresIn,
     secret = config.jwtSecret
   ) => {
     try {
@@ -31,7 +38,7 @@ export class AuthService {
         },
         secret,
         {
-          expiresIn: expiresIn,
+          expiresIn,
         }
       );
       return token;
@@ -39,7 +46,30 @@ export class AuthService {
       return null;
     }
   };
-  loginUser = async (body: LoginUserBody) => {
+  private genRefreshToken = (
+    payload: RefreshTokenPayload,
+    expiresIn = config.refreshTokenExpiresIn,
+    secret = config.jwtSecret
+  ) => {
+    try {
+      const token = jwt.sign(
+        {
+          deviceId: payload.deviceId,
+        },
+        secret,
+        {
+          expiresIn,
+        }
+      );
+      return token;
+    } catch (err) {
+      return null;
+    }
+  };
+  loginUser = async (
+    body: LoginUserBody,
+    { ip = 'unknown', deviceName = 'unknown' }: AuthUserInfo
+  ) => {
     const user = await usersRepository.getUserByLoginOrEmail(body.loginOrEmail);
     if (!user) {
       return {
@@ -56,11 +86,21 @@ export class AuthService {
         refreshToken: null,
       };
     }
+
+    const { id: deviceId } = await deviceRepository.add({
+      userId: user._id,
+      device_name: deviceName,
+    });
+
     const userId = user._id.toString();
-    const refreshToken = this.genToken({ userId }, config.refreshTokenExpiresIn);
-    const accessToken = this.genToken({ userId }, config.accessTokenExpiresIn);
+    const refreshToken = this.genRefreshToken({ deviceId });
+    const accessToken = this.genAccessToken({ userId });
     if (refreshToken) {
-      await sessionsService.setSession(userId, refreshToken);
+      const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
+      if (typeof payload !== 'string') {
+        const { iat = 0, exp = 0, deviceId } = payload;
+        await sessionsService.add({ exp, iat, ip, deviceId });
+      }
     }
 
     return {
@@ -72,11 +112,20 @@ export class AuthService {
   logout = async (userId: string) => {
     return await sessionsService.logout(userId);
   };
-  refreshSession = async (userId: string) => {
-    const refreshToken = this.genToken({ userId }, config.refreshTokenExpiresIn);
-    const accessToken = this.genToken({ userId }, config.accessTokenExpiresIn);
+  refreshSession = async (deviceId: string) => {
+    const device = await deviceRepository.getById(deviceId);
+    if (!device) {
+      return null;
+    }
+    const userId = device.userId.toString();
+    const refreshToken = this.genRefreshToken({ deviceId });
+    const accessToken = this.genAccessToken({ userId });
     if (refreshToken) {
-      await sessionsService.setSession(userId, refreshToken);
+      const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
+      if (typeof payload !== 'string') {
+        const { iat = 0, exp = 0, deviceId } = payload;
+        await sessionsService.refresh({ exp, iat, deviceId });
+      }
     }
 
     return { refreshToken, accessToken };

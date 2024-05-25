@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
 import { PostInputData, PostsPaginationParams } from './types/interfaces';
-import { postCollection } from '../../db/post.collection';
+import { postCollection } from '../../db/collections/post.collection';
 
 export class PostsRepository {
   private filter = (blogId?: string) => {

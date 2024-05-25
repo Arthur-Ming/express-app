@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { PostJoinedBlogDB, PostOutputData, PostsPaginationParams } from './types/interfaces';
-import { postCollection } from '../../db/post.collection';
+import { postCollection } from '../../db/collections/post.collection';
 import { PostsRepository } from './posts.repository';
 import { Pagination } from '../../common/types/interfaces';
 

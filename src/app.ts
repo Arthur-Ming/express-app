@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { dropCollections } from './db/dropCollections';
+import { dropCollections } from './db/collections/dropCollections';
 import postsRouter from './resources/posts/posts.routes';
 import blogsRouter from './resources/blogs/blogs.routes';
 import { httpStatutes } from './common/httpStatutes';
@@ -9,9 +9,10 @@ import authRouter from './resources/auth/auth.routes';
 import cookieParser from 'cookie-parser';
 
 export const app = express();
+
+app.set('trust proxy', true);
 app.use(cookieParser());
 const bodyParser = express.json();
-
 app.use(bodyParser);
 
 app.delete('/testing/all-data', async (req: Request, res: Response) => {

@@ -21,7 +21,12 @@ const usersRepository = new UsersRepository();
 const sessionsService = new SessionsService();
 
 export const authLogin = async (req: Request, res: Response) => {
-  const { isLogin, accessToken, refreshToken } = await authService.loginUser(req.body);
+  const ip = req.ip;
+  const deviceName = req.headers['user-agent'];
+  const { isLogin, accessToken, refreshToken } = await authService.loginUser(req.body, {
+    ip,
+    deviceName,
+  });
 
   if (!isLogin) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
@@ -49,22 +54,7 @@ export const sendEmail = async (req: Request, res: Response) => {
   const date = add(new Date(), {
     minutes: 30,
   });
-  console.log(date);
-  // const transporter = nodemailer.createTransport({
-  //   service: 'gmail',
-  //   auth: {
-  //     user: config.email,
-  //     pass: config.emailPassword,
-  //   },
-  // });
-  // const code = uuidv4();
-  // const info = await transporter.sendMail({
-  //   from: `"Arthur 👻" <${config.email}>`, // sender address
-  //   to: 'arthurming7@gmail.com', // list of receivers
-  //   subject: 'Hello ✔', // Subject line
-  //   html: `<b>Your code: ${code}</b>`, // html body
-  // });
-  // console.log(info);
+
   res.status(httpStatutes.OK_200).json('email');
 };
 
@@ -218,9 +208,9 @@ export const logout = async (req: Request, res: Response) => {
     if (!session) {
       throw new Error();
     }
-    if (session.refreshToken !== refreshToken) {
-      throw new Error();
-    }
+    // if (session.refreshToken !== refreshToken) {
+    //   throw new Error();
+    // }
     await sessionsService.logout(payload.userId);
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
   } catch (err) {
@@ -230,27 +220,21 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refreshToken; //cookieSecure set true or false for get
 
   try {
     const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
 
-    if (typeof payload === 'string' || !payload?.userId) {
+    if (typeof payload === 'string' || !payload?.deviceId) {
       throw new Error();
     }
-
-    const session = await sessionsService.findByUserId(payload.userId);
-    if (!session) {
-      throw new Error();
+    const refreshedSession = await authService.refreshSession(payload.deviceId);
+    if (!refreshedSession) {
+      res.sendStatus(httpStatutes.NOT_FOUND_404);
+      return;
     }
-    if (session.refreshToken !== refreshToken) {
-      throw new Error();
-    }
-
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-      await authService.refreshSession(payload.userId);
-
-    if (!newAccessToken || !newRefreshToken) {
+    const { refreshToken: newRefreshToken, accessToken: newAccessToken } = refreshedSession;
+    if (!newRefreshToken || !newAccessToken) {
       res.sendStatus(httpStatutes.INTERNAL_SERVER_ERROR);
       return;
     }

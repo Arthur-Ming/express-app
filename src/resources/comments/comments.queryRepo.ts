@@ -1,4 +1,4 @@
-import { commentsCollection } from '../../db/comments.collection';
+import { commentsCollection } from '../../db/collections/comments.collection';
 import { ObjectId } from 'mongodb';
 import {
   CommentsJoinedCommentatorInfoDB,

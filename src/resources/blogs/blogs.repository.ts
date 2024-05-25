@@ -1,6 +1,6 @@
 import { BlogInputData, BlogsQueryParams } from './types/interfaces';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
-import { blogCollection } from '../../db/blog.collection';
+import { blogCollection } from '../../db/collections/blog.collection';
 import { ObjectId } from 'mongodb';
 
 const filter = ({ searchNameTerm }: BlogsQueryParams) => {
