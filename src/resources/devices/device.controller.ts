@@ -50,8 +50,6 @@ export const deleteAll = async (req: Request, res: Response) => {
 };
 
 export const deleteById = async (req: Request, res: Response) => {
-  console.log(req.params.id);
-
   const refreshToken = req.cookies.refreshToken;
   try {
     const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);

@@ -7,4 +7,5 @@ export enum httpStatutes {
   'UNAUTHORIZED_401' = 401,
   'INTERNAL_SERVER_ERROR' = 500,
   'Forbidden_403' = 403,
+  'TooManyRequests_429' = 429,
 }

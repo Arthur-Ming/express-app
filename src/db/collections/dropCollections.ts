@@ -1,15 +1,6 @@
-import { blogCollection } from './blog.collection';
-import { postCollection } from './post.collection';
-import { userCollection } from './user.collection';
-import { commentsCollection } from './comments.collection';
-import { emailConfirmationCollection } from './emailConformition.collection';
-import { sessionCollection } from './session.collections';
+import { db } from '../db';
 
 export const dropCollections = async () => {
-  await blogCollection.drop();
-  await postCollection.drop();
-  await userCollection.drop();
-  await commentsCollection.drop();
-  await emailConfirmationCollection.drop();
-  await sessionCollection.drop();
+  const collections = await db.collections();
+  await Promise.all(collections.map((c) => c.drop()));
 };
