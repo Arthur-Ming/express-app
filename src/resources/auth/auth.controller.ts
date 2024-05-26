@@ -208,7 +208,10 @@ export const logout = async (req: Request, res: Response) => {
     if (!session) {
       throw new Error();
     }
-
+    if (session.exp !== payload.exp) {
+      res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+      return;
+    }
     await authService.logout(payload.deviceId);
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
   } catch (err) {
@@ -231,7 +234,8 @@ export const refreshToken = async (req: Request, res: Response) => {
       throw new Error();
     }
     if (session.exp !== payload.exp) {
-      throw new Error();
+      res.sendStatus(httpStatutes.UNAUTHORIZED_401);
+      return;
     }
 
     const refreshedSession = await authService.refreshSession(payload.deviceId);
