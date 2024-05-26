@@ -39,12 +39,20 @@ export class SessionsRepo {
     );
     return updateResult.matchedCount === 1;
   };
-  findByUserId = async (userId: string) => {
-    const foundSession = await sessionCollection.findOne({ userId: new ObjectId(userId) });
+  findByDeviceId = async (deviceId: string) => {
+    const foundSession = await sessionCollection.findOne({ deviceId: new ObjectId(deviceId) });
     return foundSession;
   };
-  remove = async (userId: string) => {
-    const deleteResult = await sessionCollection.deleteOne({ userId: new ObjectId(userId) });
+
+  removeExcludeCurrent = async (currentDeviceId: string) => {
+    const deleteResult = await sessionCollection.deleteMany({
+      deviceId: { $ne: new ObjectId(currentDeviceId) },
+    });
+    return deleteResult.deletedCount === 1;
+  };
+
+  removeByDeviceId = async (deviceId: string) => {
+    const deleteResult = await sessionCollection.deleteOne({ deviceId: new ObjectId(deviceId) });
     return deleteResult.deletedCount === 1;
   };
 }

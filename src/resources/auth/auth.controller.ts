@@ -201,17 +201,15 @@ export const logout = async (req: Request, res: Response) => {
 
   try {
     const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
-    if (typeof payload === 'string' || !payload?.userId) {
+    if (typeof payload === 'string' || !payload?.deviceId) {
       throw new Error();
     }
-    const session = await sessionsService.findByUserId(payload.userId);
+    const session = await sessionsService.findByDeviceId(payload.deviceId);
     if (!session) {
       throw new Error();
     }
-    // if (session.refreshToken !== refreshToken) {
-    //   throw new Error();
-    // }
-    await sessionsService.logout(payload.userId);
+
+    await authService.logout(payload.deviceId);
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
   } catch (err) {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
@@ -228,6 +226,14 @@ export const refreshToken = async (req: Request, res: Response) => {
     if (typeof payload === 'string' || !payload?.deviceId) {
       throw new Error();
     }
+    const session = await sessionsService.findByDeviceId(payload.deviceId);
+    if (!session) {
+      throw new Error();
+    }
+    if (session.exp !== payload.exp) {
+      throw new Error();
+    }
+
     const refreshedSession = await authService.refreshSession(payload.deviceId);
     if (!refreshedSession) {
       res.sendStatus(httpStatutes.NOT_FOUND_404);

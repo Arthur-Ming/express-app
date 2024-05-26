@@ -15,11 +15,11 @@ export class SessionsService {
   refresh = async (refreshSessionDTO: RefreshSessionDTO) => {
     return await sessionsRepo.update(refreshSessionDTO);
   };
-  logout = async (userId: string) => {
-    return await sessionsRepo.remove(userId);
+  logout = async (deviceId: string) => {
+    return await sessionsRepo.removeByDeviceId(deviceId);
   };
 
-  findByUserId = async (userId: string) => {
-    return await sessionsRepo.findByUserId(userId);
+  findByDeviceId = async (deviceId: string) => {
+    return await sessionsRepo.findByDeviceId(deviceId);
   };
 }

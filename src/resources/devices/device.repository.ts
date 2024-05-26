@@ -1,6 +1,5 @@
 import { deviceCollection } from '../../db/collections/device.collection';
 import { DeviceDbInterface } from '../../db/dbTypes/device-db-interface';
-import { commentsCollection } from '../../db/collections/comments.collection';
 import { ObjectId } from 'mongodb';
 
 export class DeviceRepository {
@@ -17,5 +16,26 @@ export class DeviceRepository {
     }
 
     return found;
+  };
+
+  getAllByUserId = async (userId: string) => {
+    const found = await deviceCollection.find({ userId: new ObjectId(userId) });
+    if (!found) {
+      return null;
+    }
+
+    return found.toArray();
+  };
+
+  remove = async (id: string) => {
+    const deleteResult = await deviceCollection.deleteOne({ _id: new ObjectId(id) });
+    return deleteResult.deletedCount === 1;
+  };
+
+  removeExcludeCurrent = async (currentDeviceId: string) => {
+    const deleteResult = await deviceCollection.deleteMany({
+      _id: { $ne: new ObjectId(currentDeviceId) },
+    });
+    return deleteResult.deletedCount > 0;
   };
 }

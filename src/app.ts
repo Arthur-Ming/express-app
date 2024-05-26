@@ -7,6 +7,7 @@ import usersRouter from './resources/users/users.routes';
 import commentsRouter from './resources/comments/comments.routes';
 import authRouter from './resources/auth/auth.routes';
 import cookieParser from 'cookie-parser';
+import devicesRouter from './resources/devices/device.routes';
 
 export const app = express();
 
@@ -25,3 +26,4 @@ app.use(blogsRouter);
 app.use(postsRouter);
 app.use(usersRouter);
 app.use(commentsRouter);
+app.use(devicesRouter);

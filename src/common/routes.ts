@@ -20,4 +20,6 @@ export default {
   commentById: `/${resources.comments}/:id`,
   commentBySpecifiedId: `/${resources.comments}/:commentId`,
   commentBySpecifiedPostId: `/${resources.posts}/:postId/comments`,
+  devices: '/security/devices',
+  deviceById: '/security/devices/:id',
 };

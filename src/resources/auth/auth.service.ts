@@ -109,8 +109,9 @@ export class AuthService {
       refreshToken,
     };
   };
-  logout = async (userId: string) => {
-    return await sessionsService.logout(userId);
+  logout = async (deviceId: string) => {
+    await deviceRepository.remove(deviceId);
+    await sessionsService.logout(deviceId);
   };
   refreshSession = async (deviceId: string) => {
     const device = await deviceRepository.getById(deviceId);
