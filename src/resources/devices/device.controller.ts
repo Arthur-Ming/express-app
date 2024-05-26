@@ -62,6 +62,11 @@ export const deleteById = async (req: Request, res: Response) => {
       res.sendStatus(httpStatutes.NOT_FOUND_404);
       return;
     }
+    const deviceByParamId = await deviceRepository.getById(req.params.id);
+    if (!deviceByParamId) {
+      res.sendStatus(httpStatutes.NOT_FOUND_404);
+      return;
+    }
     const userId = device.userId.toString();
     const userDevices = await deviceRepository.getAllByUserId(userId);
     if (!userDevices) {

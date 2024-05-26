@@ -20,9 +20,9 @@ const authRouter = Router();
 authRouter.get(routes.authMe, checkByJWTAuthorization, authMe);
 authRouter.post(routes.authLogin, rateLimits, loginBodyValidation, authLogin);
 authRouter.post(routes.authLogout, logout);
-authRouter.post(routes.authRegistration, usersInputBodyValidation, registration);
-authRouter.post(routes.authRegistrationConfirmation, registrationConfirmation);
-authRouter.post(routes.authRegistrationEmailResending, registrationEmailResending);
+authRouter.post(routes.authRegistration, rateLimits, usersInputBodyValidation, registration);
+authRouter.post(routes.authRegistrationConfirmation, rateLimits, registrationConfirmation);
+authRouter.post(routes.authRegistrationEmailResending, rateLimits, registrationEmailResending);
 authRouter.post(routes.authRefreshToken, refreshToken);
 
 export default authRouter;
