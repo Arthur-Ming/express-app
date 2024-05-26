@@ -13,11 +13,12 @@ import {
 } from './auth.controller';
 import { checkByJWTAuthorization } from '../../utils/authorization';
 import { usersInputBodyValidation } from '../users/usersValidation/usersInputBodyValidation';
+import { rateLimits } from '../../utils/rateLimits';
 
 const authRouter = Router();
 
 authRouter.get(routes.authMe, checkByJWTAuthorization, authMe);
-authRouter.post(routes.authLogin, loginBodyValidation, authLogin);
+authRouter.post(routes.authLogin, rateLimits, loginBodyValidation, authLogin);
 authRouter.post(routes.authLogout, logout);
 authRouter.post(routes.authRegistration, usersInputBodyValidation, registration);
 authRouter.post(routes.authRegistrationConfirmation, registrationConfirmation);

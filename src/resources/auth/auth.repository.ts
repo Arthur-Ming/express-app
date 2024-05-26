@@ -1,6 +1,6 @@
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
-import { blogCollection } from '../../db/blog.collection';
-import { emailConfirmationCollection } from '../../db/emailConformition.collection';
+import { blogCollection } from '../../db/collections/blog.collection';
+import { emailConfirmationCollection } from '../../db/collections/emailConformition.collection';
 import { EmailConfirmation } from './types/interfaces';
 import { EmailConfirmationDbInterface } from '../../db/dbTypes/emailConfirmation-db-interface';
 import { ObjectId } from 'mongodb';

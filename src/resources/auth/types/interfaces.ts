@@ -1,8 +1,10 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
+import { JwtPayload } from 'jsonwebtoken';
 
 export interface AccessTokenPayload extends JwtPayload {
   userId: string;
+}
+export interface RefreshTokenPayload extends JwtPayload {
+  deviceId: string;
 }
 
 export interface AuthMeOutput {
@@ -23,4 +25,9 @@ export interface RegistrationConfirmationBody {
 }
 export interface RegistrationEmailResendingBody {
   email: string;
+}
+
+export interface AuthUserInfo {
+  ip?: string;
+  deviceName?: string;
 }

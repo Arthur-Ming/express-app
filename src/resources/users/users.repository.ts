@@ -1,8 +1,8 @@
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
-import { userCollection } from '../../db/user.collection';
+import { userCollection } from '../../db/collections/user.collection';
 import { ObjectId } from 'mongodb';
 import { LoginUserBody, UsersPaginationParams } from './types/interfaces';
-import { blogCollection } from '../../db/blog.collection';
+import { blogCollection } from '../../db/collections/blog.collection';
 
 const filter = ({ searchEmailTerm, searchLoginTerm }: UsersPaginationParams) => {
   return {
