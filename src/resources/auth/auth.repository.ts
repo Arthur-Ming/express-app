@@ -1,7 +1,5 @@
-import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
-import { blogCollection } from '../../db/collections/blog.collection';
 import { emailConfirmationCollection } from '../../db/collections/emailConformition.collection';
-import { EmailConfirmation } from './types/interfaces';
+
 import { EmailConfirmationDbInterface } from '../../db/dbTypes/emailConfirmation-db-interface';
 import { ObjectId } from 'mongodb';
 

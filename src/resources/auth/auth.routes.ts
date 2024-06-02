@@ -5,6 +5,8 @@ import {
   authLogin,
   authMe,
   logout,
+  newPassword,
+  passwordRecover,
   refreshToken,
   registration,
   registrationConfirmation,
@@ -14,6 +16,8 @@ import {
 import { checkByJWTAuthorization } from '../../utils/authorization';
 import { usersInputBodyValidation } from '../users/usersValidation/usersInputBodyValidation';
 import { rateLimits } from '../../utils/rateLimits';
+import { passwordRecoveryInputValidation } from './authValidations/passwordRecoveryInputValidation';
+import { newPasswordInputValidation } from './authValidations/newPasswordInputValidation';
 
 const authRouter = Router();
 
@@ -24,5 +28,12 @@ authRouter.post(routes.authRegistration, rateLimits, usersInputBodyValidation, r
 authRouter.post(routes.authRegistrationConfirmation, rateLimits, registrationConfirmation);
 authRouter.post(routes.authRegistrationEmailResending, rateLimits, registrationEmailResending);
 authRouter.post(routes.authRefreshToken, refreshToken);
+authRouter.post(
+  routes.authPasswordRecovery,
+  rateLimits,
+  passwordRecoveryInputValidation,
+  passwordRecover
+);
+authRouter.post(routes.authNewPassword, rateLimits, newPasswordInputValidation, newPassword);
 
 export default authRouter;

@@ -31,3 +31,11 @@ export interface AuthUserInfo {
   ip?: string;
   deviceName?: string;
 }
+export interface PasswordRecoverInput {
+  email: string;
+}
+
+export interface NewPasswordInput {
+  newPassword: string;
+  recoveryCode: string;
+}

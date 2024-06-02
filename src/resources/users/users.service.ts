@@ -32,4 +32,10 @@ export class UsersService {
       items: items.map((item) => mapToOutput(item)),
     };
   };
+  updatePassword = async (userId: string, newPassword: string) => {
+    const salt = await bcrypt.genSalt(config.saltRounds);
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    return usersRepository.updatePassword(userId, hash);
+  };
 }
