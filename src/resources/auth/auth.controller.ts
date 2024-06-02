@@ -267,27 +267,32 @@ export const passwordRecover = async (
   res: Response
 ) => {
   const user = await usersRepository.getUserByEmail(req.body.email);
+  console.log(user);
   if (!user) {
     res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
     return;
   }
 
   const recoverCode = await authService.addRecoverCode(user._id.toString());
-
-  const info = await transporter.sendMail({
-    from: `"Arthur 👻" <${config.email}>`,
-    to: req.body.email,
-    subject: 'Recovery code ✔',
-    html: `<h1>Password recovery</h1>
+  console.log(req.body.email);
+  transporter
+    .sendMail({
+      from: `"Arthur 👻" <${config.email}>`,
+      to: req.body.email,
+      subject: 'Recovery code ✔',
+      html: `<h1>Password recovery</h1>
   <p>To finish password recovery please follow the link below:
-    <a href='https://somesite.com/password-recovery?recoveryCode=${recoverCode}'>recovery password</a>
+    <a href=https://somesite.com/password-recovery?recoveryCode=${recoverCode}>recovery password</a>
+     
   </p>`,
-  });
+    })
+    .catch((err) => console.error(err));
 
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
 export const newPassword = async (req: RequestWithBody<NewPasswordInput>, res: Response) => {
   const recoveryCode = await authService.getRecoverCodeById(req.body.recoveryCode);
+  console.log(recoveryCode);
   if (!recoveryCode) {
     res.sendStatus(httpStatutes.BAD_REQUEST_400);
     return;
@@ -296,5 +301,6 @@ export const newPassword = async (req: RequestWithBody<NewPasswordInput>, res: R
     recoveryCode.userId.toString(),
     req.body.newPassword
   );
+  console.log(updateResult);
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
