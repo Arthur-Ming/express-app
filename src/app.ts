@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { dropCollections } from './db/collections/dropCollections';
+import { dropCollections } from './db/helpers/dropCollections';
 import postsRouter from './resources/posts/posts.routes';
 import blogsRouter from './resources/blogs/blogs.routes';
 import { httpStatutes } from './common/httpStatutes';

@@ -115,4 +115,15 @@ export class UsersRepository {
 
     return foundUser;
   };
+  updatePassword = async (userId: string, newPasswordHash: string) => {
+    const updateResult = await userCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          password: newPasswordHash,
+        },
+      }
+    );
+    return updateResult.matchedCount === 1;
+  };
 }

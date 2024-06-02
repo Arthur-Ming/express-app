@@ -11,7 +11,12 @@ import { UsersService } from '../users/users.service';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { ObjectId } from 'mongodb';
-import { RegistrationConfirmationBody, RegistrationEmailResendingBody } from './types/interfaces';
+import {
+  NewPasswordInput,
+  PasswordRecoverInput,
+  RegistrationConfirmationBody,
+  RegistrationEmailResendingBody,
+} from './types/interfaces';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SessionsService } from '../sessions/sessions.service';
 
@@ -255,4 +260,41 @@ export const refreshToken = async (req: Request, res: Response) => {
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }
+};
+
+export const passwordRecover = async (
+  req: RequestWithBody<PasswordRecoverInput>,
+  res: Response
+) => {
+  const user = await usersRepository.getUserByEmail(req.body.email);
+  if (!user) {
+    res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+    return;
+  }
+
+  const recoverCode = await authService.addRecoverCode(user._id.toString());
+
+  const info = await transporter.sendMail({
+    from: `"Arthur 👻" <${config.email}>`,
+    to: req.body.email,
+    subject: 'Recovery code ✔',
+    html: `<h1>Password recovery</h1>
+  <p>To finish password recovery please follow the link below:
+    <a href='https://somesite.com/password-recovery?recoveryCode=recoverCode'>recovery password</a>
+  </p>`,
+  });
+
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+export const newPassword = async (req: RequestWithBody<NewPasswordInput>, res: Response) => {
+  const recoveryCode = await authService.getRecoverCodeById(req.body.recoveryCode);
+  if (!recoveryCode) {
+    res.sendStatus(httpStatutes.BAD_REQUEST_400);
+    return;
+  }
+  const updateResult = await usersService.updatePassword(
+    recoveryCode.userId.toString(),
+    req.body.newPassword
+  );
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };

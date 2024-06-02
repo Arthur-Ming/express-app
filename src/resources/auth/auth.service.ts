@@ -14,10 +14,12 @@ import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { WithId } from 'mongodb';
 import { SessionsService } from '../sessions/sessions.service';
 import { DeviceRepository } from '../devices/device.repository';
+import { CodeRecoverRepository } from './codeRecover.repository';
 
 const usersRepository = new UsersRepository();
 const sessionsService = new SessionsService();
 const deviceRepository = new DeviceRepository();
+const codeRecoverRepository = new CodeRecoverRepository();
 export class AuthService {
   private authMeOutputMap = (user: WithId<UserDbInterface>): AuthMeOutput => {
     return {
@@ -138,5 +140,13 @@ export class AuthService {
     }
 
     return this.authMeOutputMap(user);
+  };
+  addRecoverCode = async (userId: string) => {
+    const { id } = await codeRecoverRepository.add(userId);
+    return id;
+  };
+  getRecoverCodeById = async (recoveryCodeId: string) => {
+    const codeRecovery = await codeRecoverRepository.getById(recoveryCodeId);
+    return codeRecovery;
   };
 }
