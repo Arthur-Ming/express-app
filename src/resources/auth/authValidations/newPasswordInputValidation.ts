@@ -14,6 +14,5 @@ export const newPasswordInputValidation = [
       }
       return isValid;
     }),
-
-  inputCheckErrorsMiddleware,
+  body('recoveryCode').isMongoId(),
 ];
