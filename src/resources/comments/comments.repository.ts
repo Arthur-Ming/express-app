@@ -1,20 +1,20 @@
-import { commentsCollection } from '../../db/collections/comments.collection';
+import { Comments } from '../../db/collections/comments.collection';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId } from 'mongodb';
 import { CommentsInputBody } from './types/interfaces';
 
 export class CommentsRepository {
   getTotalCount = async (postId: string) => {
-    return await commentsCollection.countDocuments({ postId: new ObjectId(postId) });
+    return Comments.countDocuments({ postId: new ObjectId(postId) });
   };
-  add = async (newComment: CommentsDbInterface) => {
-    const insertOneResult = await commentsCollection.insertOne(newComment);
+  add = async (newCommentDTO: CommentsDbInterface) => {
+    const newComment = await Comments.create(newCommentDTO);
 
-    return { id: insertOneResult.insertedId.toString() };
+    return newComment;
   };
 
   findCommentById = async (commentId: string) => {
-    const foundComment = await commentsCollection.findOne({ _id: new ObjectId(commentId) });
+    const foundComment = await Comments.findById(commentId);
     if (!foundComment) {
       return null;
     }
@@ -23,7 +23,7 @@ export class CommentsRepository {
   };
 
   update = async (commentId: string, input: CommentsInputBody): Promise<boolean> => {
-    const updateResult = await commentsCollection.updateOne(
+    const updateResult = await Comments.updateOne(
       { _id: new ObjectId(commentId) },
       {
         $set: {
@@ -35,7 +35,7 @@ export class CommentsRepository {
   };
 
   remove = async (commentId: string): Promise<boolean> => {
-    const deleteResult = await commentsCollection.deleteOne({ _id: new ObjectId(commentId) });
+    const deleteResult = await Comments.deleteOne({ _id: new ObjectId(commentId) });
     return deleteResult.deletedCount === 1;
   };
 }

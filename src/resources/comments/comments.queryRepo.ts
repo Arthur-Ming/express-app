@@ -1,4 +1,4 @@
-import { commentsCollection } from '../../db/collections/comments.collection';
+import { Comments } from '../../db/collections/comments.collection';
 import { ObjectId } from 'mongodb';
 import {
   CommentsJoinedCommentatorInfoDB,
@@ -49,26 +49,21 @@ export class CommentsQueryRepo {
       },
     ];
   };
-  private queryParamsOptions = (queryParams: CommentsPaginationParams) => {
-    return [
-      { $sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 } },
-      { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize },
-      { $limit: queryParams.pageSize },
-    ];
-  };
+
   find = async (
     queryParams: CommentsPaginationParams,
     postId: string
   ): Promise<Pagination<CommentsOutputData[]>> => {
-    const comments = (await commentsCollection
-      .aggregate([
-        {
-          $match: { postId: new ObjectId(postId) },
-        },
-        ...this.joinOptions(),
-        ...this.queryParamsOptions(queryParams),
-      ])
-      .toArray()) as CommentsJoinedCommentatorInfoDB[];
+    const comments = await Comments.aggregate([
+      {
+        $match: { postId: new ObjectId(postId) },
+      },
+      ...this.joinOptions(),
+      { $sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 } },
+      { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize },
+      { $limit: queryParams.pageSize },
+    ]);
+
     const totalCount = await commentsRepository.getTotalCount(postId);
     return {
       pagesCount: Math.ceil(totalCount / queryParams.pageSize),
@@ -80,15 +75,13 @@ export class CommentsQueryRepo {
   };
 
   findById = async (commentId: string) => {
-    const comment = (await commentsCollection
-      .aggregate([
-        {
-          $match: { _id: new ObjectId(commentId) },
-        },
-        ...this.joinOptions(),
-        { $limit: 1 },
-      ])
-      .toArray()) as CommentsJoinedCommentatorInfoDB[];
+    const comment = await Comments.aggregate([
+      {
+        $match: { _id: new ObjectId(commentId) },
+      },
+      ...this.joinOptions(),
+      { $limit: 1 },
+    ]);
 
     if (!comment || !comment[0]) {
       return null;
