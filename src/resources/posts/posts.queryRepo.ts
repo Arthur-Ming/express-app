@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { PostJoinedBlogDB, PostOutputData, PostsPaginationParams } from './types/interfaces';
-import { postCollection } from '../../db/collections/post.collection';
+import { Posts } from '../../db/collections/post.collection';
 import { PostsRepository } from './posts.repository';
 import { Pagination } from '../../common/types/interfaces';
 
@@ -48,29 +48,21 @@ export class PostsQueryRepo {
     ];
   };
 
-  private queryParamsOptions = (queryParams: PostsPaginationParams) => {
-    return [
-      { $sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 } },
-      { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize },
-      { $limit: queryParams.pageSize },
-    ];
-  };
-
   find = async (
     queryParams: PostsPaginationParams,
     blogId?: string
   ): Promise<Pagination<PostOutputData[]>> => {
     const totalCount = await postsRepository.getTotalCount(queryParams, blogId);
 
-    const items = (await postCollection
-      .aggregate([
-        {
-          $match: { blogId: blogId ? new ObjectId(blogId) : { $exists: true } },
-        },
-        ...this.joinOptions(),
-        ...this.queryParamsOptions(queryParams),
-      ])
-      .toArray()) as PostJoinedBlogDB[];
+    const items = await Posts.aggregate([
+      {
+        $match: { blogId: blogId ? new ObjectId(blogId) : { $exists: true } },
+      },
+      ...this.joinOptions(),
+      { $sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 } },
+      { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize },
+      { $limit: queryParams.pageSize },
+    ]);
 
     return {
       pagesCount: Math.ceil(totalCount / queryParams.pageSize),
@@ -82,14 +74,13 @@ export class PostsQueryRepo {
   };
 
   findById = async (postId: string) => {
-    const posts = (await postCollection
-      .aggregate([
-        {
-          $match: { _id: new ObjectId(postId) },
-        },
-        ...this.joinOptions(),
-      ])
-      .toArray()) as PostJoinedBlogDB[];
+    const posts = await Posts.aggregate([
+      {
+        $match: { _id: new ObjectId(postId) },
+      },
+      ...this.joinOptions(),
+    ]);
+
     if (!posts || !posts[0]) {
       return null;
     }

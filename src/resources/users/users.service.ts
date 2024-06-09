@@ -14,8 +14,7 @@ export class UsersService {
 
     input.password = hash;
     const newUser = mapToCreateUser(input);
-    const { id: addedUserId } = await usersRepository.add(newUser);
-    const addedUser = await usersRepository.findById(addedUserId);
+    const addedUser = await usersRepository.add(newUser);
     return addedUser ? mapToOutput(addedUser) : null;
   };
   findByQueryParams = async (

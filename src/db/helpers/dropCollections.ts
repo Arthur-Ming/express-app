@@ -1,6 +1,6 @@
-import { db } from '../db';
+import mongoose from 'mongoose';
 
 export const dropCollections = async () => {
-  const collections = await db.collections();
-  await Promise.all(collections.map((c) => c.drop()));
+  const collections = mongoose.connection.collections;
+  await Promise.all(Object.values(collections).map((collection) => collection.deleteMany({})));
 };

@@ -33,9 +33,8 @@ export class BlogsService {
   };
 
   addBlog = async (input: BlogInputData) => {
-    const newBlog = mapToCreateBlog(input);
-    const { id: createdBlogId } = await blogsRepository.add(newBlog);
-    const createdBlog = await blogsRepository.findById(createdBlogId);
+    const newBlogDTO = mapToCreateBlog(input);
+    const createdBlog = await blogsRepository.add(newBlogDTO);
     return createdBlog ? mapToOutput(createdBlog) : null;
   };
 

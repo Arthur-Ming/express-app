@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
 import { PostInputData, PostsPaginationParams } from './types/interfaces';
-import { postCollection } from '../../db/collections/post.collection';
+import { Posts } from '../../db/collections/post.collection';
 
 export class PostsRepository {
   private filter = (blogId?: string) => {
@@ -12,21 +12,26 @@ export class PostsRepository {
       : {};
   };
 
-  getTotalCount = async (queryParams: PostsPaginationParams, blogId?: string) => {
-    return await postCollection.countDocuments(this.filter(blogId));
+  getTotalCount = (queryParams: PostsPaginationParams, blogId?: string) => {
+    return Posts.countDocuments(this.filter(blogId));
   };
 
   find = async (queryParams: PostsPaginationParams, blogId?: string) => {
-    return await postCollection
-      .find(this.filter(blogId))
-      .sort(queryParams.sortBy, queryParams.sortDirection)
-      .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
-      .limit(queryParams.pageSize)
-      .toArray();
+    const foundPosts = await Posts.find(
+      this.filter(blogId),
+      {},
+      {
+        sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 },
+        skip: (queryParams.pageNumber - 1) * queryParams.pageSize,
+        limit: queryParams.pageSize,
+      }
+    );
+
+    return foundPosts;
   };
 
   findById = async (postId: string) => {
-    const foundPost = await postCollection.findOne({ _id: new ObjectId(postId) });
+    const foundPost = await Posts.findById(postId);
 
     if (!foundPost) {
       return null;
@@ -35,13 +40,13 @@ export class PostsRepository {
     return foundPost;
   };
 
-  add = async (newPost: PostDbInterface) => {
-    const insertOneResult = await postCollection.insertOne(newPost);
+  add = async (newPostDTO: PostDbInterface) => {
+    const newPost = await Posts.create(newPostDTO);
 
-    return { id: insertOneResult.insertedId.toString() };
+    return newPost;
   };
   update = async (postId: string, input: PostInputData): Promise<boolean> => {
-    const updateResult = await postCollection.updateOne(
+    const updateResult = await Posts.updateOne(
       { _id: new ObjectId(postId) },
       {
         $set: {
@@ -55,7 +60,7 @@ export class PostsRepository {
     return updateResult.matchedCount === 1;
   };
   remove = async (postId: string): Promise<boolean> => {
-    const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(postId) });
+    const deleteResult = await Posts.deleteOne({ _id: new ObjectId(postId) });
     return deleteResult.deletedCount === 1;
   };
 }

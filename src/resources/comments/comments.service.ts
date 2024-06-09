@@ -40,8 +40,7 @@ export class CommentsService {
       return null;
     }
     const newComment = this.mapToCreateComment(input, user);
-    const { id: commentId } = await commentsRepository.add(newComment);
-    const comment = await commentsRepository.findCommentById(commentId);
+    const comment = await commentsRepository.add(newComment);
 
     if (!comment) {
       return null;

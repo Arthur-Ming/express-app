@@ -10,8 +10,8 @@ import { loginBodyValidation } from './usersValidation/loginBodyValidation';
 const usersRouter = Router();
 
 // @ts-ignore
-usersRouter.get(routes.users, checkBasicAuthorization, usersQueryParamsValidation, getUsers);
-usersRouter.post(routes.users, checkBasicAuthorization, usersInputBodyValidation, addUser);
+usersRouter.get(routes.users, /*checkBasicAuthorization,*/ usersQueryParamsValidation, getUsers);
+usersRouter.post(routes.users, /*checkBasicAuthorization,*/ usersInputBodyValidation, addUser);
 usersRouter.delete(routes.userById, checkBasicAuthorization, paramsIdValidation, deleteUser);
 
 export default usersRouter;

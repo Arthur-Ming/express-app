@@ -43,8 +43,8 @@ export class PostsService {
       throw new Error(`blog with id ${blogId} not found`);
     }
     const newPost = this.mapToCreatePost(input, blog);
-    const { id: createdPostId } = await postsRepository.add(newPost);
-    const createdPost = await postsRepository.findById(createdPostId);
+    const createdPost = await postsRepository.add(newPost);
+
     return createdPost ? this.mapToOutput(createdPost, blog) : null;
   };
 
