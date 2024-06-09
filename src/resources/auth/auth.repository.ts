@@ -1,16 +1,16 @@
-import { emailConfirmationCollection } from '../../db/collections/emailConformition.collection';
+import { EmailConfirmations } from '../../db/collections/emailConformition.collection';
 
 import { EmailConfirmationDbInterface } from '../../db/dbTypes/emailConfirmation-db-interface';
 import { ObjectId } from 'mongodb';
 
 export class AuthRepository {
-  addEmailConfirmation = async (newConfirmation: EmailConfirmationDbInterface) => {
-    const insertOneResult = await emailConfirmationCollection.insertOne(newConfirmation);
-    return { id: insertOneResult.insertedId.toString() };
+  addEmailConfirmation = async (newConfirmationDTO: EmailConfirmationDbInterface) => {
+    const newConfirmation = await EmailConfirmations.create(newConfirmationDTO);
+    return newConfirmation;
   };
 
   findByConfirmationCode = async (confirmationCode: string) => {
-    const confirmation = await emailConfirmationCollection.findOne({
+    const confirmation = await EmailConfirmations.findOne({
       confirmationCode: confirmationCode,
     });
     if (!confirmation) {
@@ -20,7 +20,7 @@ export class AuthRepository {
   };
 
   findByUserId = async (userId: string) => {
-    const confirmation = await emailConfirmationCollection.findOne({
+    const confirmation = await EmailConfirmations.findOne({
       userId: new ObjectId(userId),
     });
     if (!confirmation) {
@@ -30,7 +30,7 @@ export class AuthRepository {
   };
 
   setConfirmed = async (confirmationCode: string) => {
-    const updateResult = await emailConfirmationCollection.updateOne(
+    const updateResult = await EmailConfirmations.updateOne(
       {
         confirmationCode: confirmationCode,
       },
@@ -44,7 +44,7 @@ export class AuthRepository {
   };
 
   updateConfirmationCode = async (userId: string, newCode: string) => {
-    const updateResult = await emailConfirmationCollection.updateOne(
+    const updateResult = await EmailConfirmations.updateOne(
       {
         userId: new ObjectId(userId),
       },

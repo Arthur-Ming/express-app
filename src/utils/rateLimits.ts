@@ -1,23 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
-import { rateCollection } from '../db/collections/rate.collection';
-import { commentsCollection } from '../db/collections/comments.collection';
-import { ObjectId } from 'mongodb';
+import { Rates } from '../db/collections/rate.collection';
 import { httpStatutes } from '../common/httpStatutes';
 
 export const rateLimits = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.originalUrl);
-  await rateCollection.insertOne({
+  await Rates.create({
     URL: req.originalUrl,
     IP: req.ip || 'unknown',
     date: Number(new Date()),
   });
 
-  const rates = await rateCollection
-    .find({
-      IP: req.ip,
-      URL: req.originalUrl,
-    })
-    .toArray();
+  const rates = await Rates.find({
+    IP: req.ip,
+    URL: req.originalUrl,
+  });
 
   const isLimit = rates.filter(({ date }) => {
     return date >= Number(new Date()) - 10 * 1000;
