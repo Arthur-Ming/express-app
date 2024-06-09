@@ -1,16 +1,16 @@
-import { deviceCollection } from '../../db/collections/device.collection';
+import { Devices } from '../../db/collections/device.collection';
 import { DeviceDbInterface } from '../../db/dbTypes/device-db-interface';
 import { ObjectId } from 'mongodb';
 
 export class DeviceRepository {
   add = async (createDeviceDTO: DeviceDbInterface) => {
-    const insertOneResult = await deviceCollection.insertOne(createDeviceDTO);
+    const newDevice = await Devices.create(createDeviceDTO);
 
-    return { id: insertOneResult.insertedId.toString() };
+    return newDevice;
   };
 
   getById = async (id: string) => {
-    const found = await deviceCollection.findOne({ _id: new ObjectId(id) });
+    const found = await Devices.findById(id);
     if (!found) {
       return null;
     }
@@ -19,21 +19,21 @@ export class DeviceRepository {
   };
 
   getAllByUserId = async (userId: string) => {
-    const found = await deviceCollection.find({ userId: new ObjectId(userId) });
+    const found = await Devices.find({ userId: new ObjectId(userId) });
     if (!found) {
       return null;
     }
 
-    return found.toArray();
+    return found;
   };
 
   remove = async (id: string) => {
-    const deleteResult = await deviceCollection.deleteOne({ _id: new ObjectId(id) });
+    const deleteResult = await Devices.deleteOne({ _id: new ObjectId(id) });
     return deleteResult.deletedCount === 1;
   };
 
   removeExcludeCurrent = async (currentDeviceId: string) => {
-    const deleteResult = await deviceCollection.deleteMany({
+    const deleteResult = await Devices.deleteMany({
       _id: { $ne: new ObjectId(currentDeviceId) },
     });
     return deleteResult.deletedCount > 0;
