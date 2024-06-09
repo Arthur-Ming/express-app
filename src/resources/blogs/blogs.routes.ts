@@ -10,14 +10,14 @@ const blogsRouter = Router();
 
 blogsRouter.get(routes.blogs, queryParamsValidation, getBlogs);
 blogsRouter.get(routes.blogById, paramsIdValidation, getBlogById);
-blogsRouter.post(routes.blogs, checkBasicAuthorization, blogsInputBodyValidation, addBlog);
+blogsRouter.post(routes.blogs, /* checkBasicAuthorization,*/ blogsInputBodyValidation, addBlog);
 blogsRouter.put(
   routes.blogById,
-  checkBasicAuthorization,
+  /*checkBasicAuthorization,*/
   paramsIdValidation,
   blogsInputBodyValidation,
   updateBlog
 );
-blogsRouter.delete(routes.blogById, checkBasicAuthorization, paramsIdValidation, deleteBlog);
+blogsRouter.delete(routes.blogById, /*checkBasicAuthorization,*/ paramsIdValidation, deleteBlog);
 
 export default blogsRouter;

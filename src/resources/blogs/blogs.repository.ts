@@ -1,6 +1,6 @@
 import { BlogInputData, BlogsQueryParams } from './types/interfaces';
 import { BlogDbInterface } from '../../db/dbTypes/blog-db-interface';
-import { blogCollection } from '../../db/collections/blog.collection';
+import { Blogs } from '../../db/collections/blog.collection';
 import { ObjectId } from 'mongodb';
 
 const filter = ({ searchNameTerm }: BlogsQueryParams) => {
@@ -16,20 +16,24 @@ const filter = ({ searchNameTerm }: BlogsQueryParams) => {
 
 export class BlogsRepository {
   getTotalCount = async (queryParams: BlogsQueryParams) => {
-    return await blogCollection.countDocuments(filter(queryParams));
+    return Blogs.countDocuments(filter(queryParams));
   };
 
   find = async (queryParams: BlogsQueryParams) => {
-    const foundBlogs = await blogCollection
-      .find(filter(queryParams))
-      .sort(queryParams.sortBy, queryParams.sortDirection)
-      .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
-      .limit(queryParams.pageSize)
-      .toArray();
+    const foundBlogs = await Blogs.find(
+      filter(queryParams),
+      {},
+      {
+        sort: { [queryParams.sortBy]: queryParams.sortDirection === 'asc' ? 1 : -1 },
+        skip: (queryParams.pageNumber - 1) * queryParams.pageSize,
+        limit: queryParams.pageSize,
+      }
+    );
+
     return foundBlogs;
   };
   findById = async (blogId: string) => {
-    const foundBlog = await blogCollection.findOne({ _id: new ObjectId(blogId) });
+    const foundBlog = await Blogs.findById(blogId);
 
     if (!foundBlog) {
       return null;
@@ -37,13 +41,14 @@ export class BlogsRepository {
 
     return foundBlog;
   };
-  add = async (newBlog: BlogDbInterface) => {
-    const insertOneResult = await blogCollection.insertOne(newBlog);
-    return { id: insertOneResult.insertedId.toString() };
+  add = async (newBlogDTO: BlogDbInterface) => {
+    const newBlog = await Blogs.create(newBlogDTO);
+
+    return newBlog;
   };
 
   update = async (blogId: string, input: BlogInputData): Promise<boolean> => {
-    const updateResult = await blogCollection.updateOne(
+    const updateResult = await Blogs.updateOne(
       { _id: new ObjectId(blogId) },
       {
         $set: input,
@@ -53,7 +58,7 @@ export class BlogsRepository {
   };
 
   remove = async (blogId: string): Promise<boolean> => {
-    const deleteResult = await blogCollection.deleteOne({ _id: new ObjectId(blogId) });
+    const deleteResult = await Blogs.deleteOne({ _id: new ObjectId(blogId) });
     return deleteResult.deletedCount === 1;
   };
 }

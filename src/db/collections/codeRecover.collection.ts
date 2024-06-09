@@ -1,4 +1,12 @@
-import { db } from '../db';
+import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { CodeRecoverDbInterface } from '../dbTypes/code-recover-db-interface';
 
-export const codeRecoverCollection = db.collection<CodeRecoverDbInterface>('code_recover');
+const { Schema } = mongoose;
+
+const codeRecoverSchema = new Schema<CodeRecoverDbInterface>({
+  userId: { type: ObjectId },
+  createdAt: { type: Number },
+});
+
+export const CodeRecovers = mongoose.model('code_recover', codeRecoverSchema);
