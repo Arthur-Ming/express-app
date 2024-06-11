@@ -152,6 +152,7 @@ export const registrationEmailResending = async (
   res: Response
 ) => {
   const doesUserExistByEmail = await usersRepository.getUserByEmail(req.body.email);
+  console.log(doesUserExistByEmail);
   if (!doesUserExistByEmail) {
     res.status(httpStatutes.BAD_REQUEST_400).json({
       errorsMessages: [
@@ -164,6 +165,7 @@ export const registrationEmailResending = async (
     return;
   }
   const confirm = await authRepository.findByUserId(doesUserExistByEmail._id.toString());
+  console.log(confirm);
   const code = uuidv4();
   // if (!confirm) {
   //   const confirmation = authRepository.addEmailConfirmation({
@@ -227,14 +229,15 @@ export const logout = async (req: Request, res: Response) => {
 
 export const refreshToken = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken; //cookieSecure set true or false for get
-
+  console.log(refreshToken);
   try {
     const payload: JwtPayload | string = jwt.verify(refreshToken, config.jwtSecret);
-
+    console.log(payload);
     if (typeof payload === 'string' || !payload?.deviceId) {
       throw new Error();
     }
     const session = await sessionsService.findByDeviceId(payload.deviceId);
+    console.log(session);
     if (!session) {
       throw new Error();
     }

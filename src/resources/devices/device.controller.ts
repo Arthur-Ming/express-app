@@ -58,6 +58,7 @@ export const deleteById = async (req: Request, res: Response) => {
       throw new Error();
     }
     const device = await deviceRepository.getById(payload.deviceId);
+
     if (!device) {
       res.sendStatus(httpStatutes.NOT_FOUND_404);
       return;
