@@ -73,6 +73,7 @@ export class AuthService {
     { ip = 'unknown', deviceName = 'unknown' }: AuthUserInfo
   ) => {
     const user = await usersRepository.getUserByLoginOrEmail(body.loginOrEmail);
+    console.log(user);
     if (!user) {
       return {
         isLogin: false,
@@ -81,6 +82,7 @@ export class AuthService {
       };
     }
     const isLogin = await bcrypt.compare(body.password, user.password);
+    console.log(isLogin);
     if (!isLogin) {
       return {
         isLogin: false,

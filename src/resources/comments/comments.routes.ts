@@ -25,7 +25,7 @@ commentsRouter.get(
 commentsRouter.get(routes.commentById, paramsIdValidation, getCommentById);
 commentsRouter.post(
   routes.commentBySpecifiedPostId,
-  /*checkByJWTAuthorization,*/
+  checkByJWTAuthorization,
   paramsPostIdValidation,
   commentInputBodyValidation,
   addComment
