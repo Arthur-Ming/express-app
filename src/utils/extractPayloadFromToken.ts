@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../common/config';
 
 export const extractPayloadFromToken = (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers['authorization'];
