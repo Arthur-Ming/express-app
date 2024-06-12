@@ -22,10 +22,10 @@ const commentsRouter = Router();
 
 commentsRouter.get(
   routes.commentBySpecifiedPostId,
-  extractPayloadFromToken,
+
   paramsPostIdValidation,
   commentsQueryParamsValidation,
-  // @ts-ignore
+
   getCommentForSpecifiedPostId
 );
 commentsRouter.get(routes.commentById, extractPayloadFromToken, paramsIdValidation, getCommentById);
