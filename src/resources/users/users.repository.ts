@@ -110,7 +110,7 @@ export class UsersRepository {
   };
 
   getUserById = async (userId: string) => {
-    const foundUser = await Users.findOne({ _id: new ObjectId(userId) });
+    const foundUser = await Users.findById(userId);
     if (!foundUser) {
       return null;
     }

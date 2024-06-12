@@ -20,7 +20,6 @@ export const checkByJWTAuthorization = (req: Request, res: Response, next: NextF
     }
     next();
   } catch (err) {
-    console.error(err);
     res.sendStatus(httpStatutes.UNAUTHORIZED_401);
     return;
   }

@@ -23,15 +23,11 @@ commentsRouter.get(
   routes.commentBySpecifiedPostId,
   paramsPostIdValidation,
   commentsQueryParamsValidation,
-  /*extractPayloadFromToken,*/
+  extractPayloadFromToken,
   // @ts-ignore
   getCommentForSpecifiedPostId
 );
-commentsRouter.get(
-  routes.commentById,
-  paramsIdValidation,
-  /* extractPayloadFromToken,*/ getCommentById
-);
+commentsRouter.get(routes.commentById, paramsIdValidation, extractPayloadFromToken, getCommentById);
 commentsRouter.post(
   routes.commentBySpecifiedPostId,
   checkByJWTAuthorization,
