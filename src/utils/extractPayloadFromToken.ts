@@ -15,16 +15,14 @@ export const extractPayloadFromToken = (req: Request, res: Response, next: NextF
     res.locals.userId = null;
     next();
   }
-  try {
-    const payload: JwtPayload | string | undefined = token && jwt.verify(token, config.jwtSecret);
-    if (!payload) {
-      res.locals.userId = null;
-    }
-    if (payload && typeof payload !== 'string') {
-      res.locals.userId = payload.userId;
-    }
-    next();
-  } catch (err) {
-    next();
+
+  const payload: JwtPayload | string | null | undefined = token && jwt.decode(token);
+
+  if (!payload) {
+    res.locals.userId = null;
   }
+  if (payload && typeof payload !== 'string') {
+    res.locals.userId = payload.userId;
+  }
+  next();
 };
