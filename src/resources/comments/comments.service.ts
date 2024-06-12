@@ -4,6 +4,7 @@ import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId, WithId } from 'mongodb';
 import { UserDbInterface } from '../../db/dbTypes/user-db-interface';
 import { UsersRepository } from '../users/users.repository';
+import { LikeStatus } from '../../db/dbTypes/comments-likes-db-interface';
 
 const commentsRepository = new CommentsRepository();
 const usersRepository = new UsersRepository();
@@ -31,6 +32,11 @@ export class CommentsService {
       commentatorInfo: {
         userLogin: user.login,
         userId: user._id.toString(),
+      },
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeStatus.None,
       },
     };
   };

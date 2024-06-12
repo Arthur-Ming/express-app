@@ -7,11 +7,28 @@ import {
 } from './types/interfaces';
 import { CommentsRepository } from './comments.repository';
 import { Pagination } from '../../common/types/interfaces';
+import { CommentsLikesDbInterface, LikeStatus } from '../../db/dbTypes/comments-likes-db-interface';
+
+const getCurrentUserLikeStatus = (
+  likes: CommentsLikesDbInterface[],
+  currentUserId?: string
+): LikeStatus => {
+  if (!currentUserId) {
+    return LikeStatus.None;
+  }
+  const currentUserLike = likes.find((like) => like.authorId.toString() === currentUserId);
+  if (!currentUserLike) {
+    return LikeStatus.None;
+  }
+
+  return currentUserLike.status;
+};
 
 const commentsRepository = new CommentsRepository();
 export class CommentsQueryRepo {
   private mapToOutput = (
-    commentJoinedCommentatorInfo: CommentsJoinedCommentatorInfoDB
+    commentJoinedCommentatorInfo: CommentsJoinedCommentatorInfoDB,
+    requestUserId?: string
   ): CommentsOutputData => {
     return {
       id: commentJoinedCommentatorInfo._id.toString(),
@@ -20,6 +37,15 @@ export class CommentsQueryRepo {
       commentatorInfo: {
         userLogin: commentJoinedCommentatorInfo?.login || null,
         userId: commentJoinedCommentatorInfo.userId.toString(),
+      },
+      likesInfo: {
+        likesCount: commentJoinedCommentatorInfo.likes.filter(
+          (like) => like.status === LikeStatus.Like
+        ).length,
+        dislikesCount: commentJoinedCommentatorInfo.likes.filter(
+          (like) => like.status === LikeStatus.Dislike
+        ).length,
+        myStatus: getCurrentUserLikeStatus(commentJoinedCommentatorInfo.likes, requestUserId),
       },
     };
   };
@@ -34,6 +60,14 @@ export class CommentsQueryRepo {
         },
       },
       {
+        $lookup: {
+          from: 'comments_likes',
+          localField: '_id',
+          foreignField: 'commentId',
+          as: 'likes',
+        },
+      },
+      {
         $replaceRoot: {
           newRoot: { $mergeObjects: [{ $arrayElemAt: ['$commentatorInfo', 0] }, '$$ROOT'] },
         },
@@ -45,6 +79,7 @@ export class CommentsQueryRepo {
           createdAt: 1,
           login: 1,
           userId: 1,
+          likes: 1,
         },
       },
     ];
@@ -52,7 +87,8 @@ export class CommentsQueryRepo {
 
   find = async (
     queryParams: CommentsPaginationParams,
-    postId: string
+    postId: string,
+    requestUserId?: string
   ): Promise<Pagination<CommentsOutputData[]>> => {
     const comments = await Comments.aggregate([
       {
@@ -70,11 +106,11 @@ export class CommentsQueryRepo {
       page: queryParams.pageNumber,
       pageSize: queryParams.pageSize,
       totalCount: totalCount,
-      items: comments.map((item) => this.mapToOutput(item)),
+      items: comments.map((item) => this.mapToOutput(item, requestUserId)),
     };
   };
 
-  findById = async (commentId: string) => {
+  findById = async (commentId: string, requestUserId?: string) => {
     const comment = await Comments.aggregate([
       {
         $match: { _id: new ObjectId(commentId) },
@@ -87,6 +123,6 @@ export class CommentsQueryRepo {
       return null;
     }
 
-    return this.mapToOutput(comment[0]);
+    return this.mapToOutput(comment[0], requestUserId);
   };
 }
