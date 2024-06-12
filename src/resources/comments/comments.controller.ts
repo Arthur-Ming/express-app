@@ -9,7 +9,8 @@ const commentsService = new CommentsService();
 const commentsRepository = new CommentsRepository();
 const commentsQueryRepo = new CommentsQueryRepo();
 export const getCommentById = async (req: Request<{ id: string }>, res: Response) => {
-  const comment = await commentsQueryRepo.findById(req.params.id);
+  const comment = await commentsQueryRepo.findById(req.params.id, res.locals.userId);
+
   if (!comment) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
@@ -19,10 +20,10 @@ export const getCommentById = async (req: Request<{ id: string }>, res: Response
 
 export const getCommentForSpecifiedPostId = async (
   req: Request<{ postId: string }, {}, {}, CommentsPaginationParams>,
-  res: Response
+  res: Response<{}, { userId: string }>
 ) => {
-  const comments = await commentsQueryRepo.find(req.query, req.params.postId);
-
+  const comments = await commentsQueryRepo.find(req.query, req.params.postId, res.locals.userId);
+  console.log(res.locals.userId);
   res.status(httpStatutes.OK_200).json(comments);
 };
 
@@ -59,5 +60,11 @@ export const deleteComment = async (req: Request<{ commentId: string }>, res: Re
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
+  res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
+};
+export const likeComment = async (req: Request<{ commentId: string }>, res: Response) => {
+  const userId = res.locals.userId;
+
+  const like = await commentsRepository.addLike(userId, req.params.commentId, req.body.likeStatus);
   res.sendStatus(httpStatutes.OK_NO_CONTENT_204);
 };
