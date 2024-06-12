@@ -4,12 +4,34 @@ import { CommentsService } from './comments.service';
 import { CommentsInputBody, CommentsPaginationParams } from './types/interfaces';
 import { CommentsRepository } from './comments.repository';
 import { CommentsQueryRepo } from './comments.queryRepo';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const commentsService = new CommentsService();
 const commentsRepository = new CommentsRepository();
 const commentsQueryRepo = new CommentsQueryRepo();
+
 export const getCommentById = async (req: Request<{ id: string }>, res: Response) => {
-  const comment = await commentsQueryRepo.findById(req.params.id, res.locals.userId);
+  const auth = req.headers['authorization'];
+  let userId;
+  if (!auth) {
+    userId = null;
+  }
+
+  const token = auth?.split(' ')[1];
+  if (!token) {
+    userId = null;
+  }
+
+  const payload: JwtPayload | string | null | undefined = token && jwt.decode(token);
+
+  if (!payload) {
+    userId = null;
+  }
+  if (payload && typeof payload !== 'string') {
+    userId = payload.userId;
+  }
+
+  const comment = await commentsQueryRepo.findById(req.params.id, userId);
 
   if (!comment) {
     res.sendStatus(httpStatutes.NOT_FOUND_404);
@@ -22,7 +44,27 @@ export const getCommentForSpecifiedPostId = async (
   req: Request<{ postId: string }, {}, {}, CommentsPaginationParams>,
   res: Response<{}, { userId: string }>
 ) => {
-  const comments = await commentsQueryRepo.find(req.query, req.params.postId, res.locals.userId);
+  const auth = req.headers['authorization'];
+  let userId;
+  if (!auth) {
+    userId = null;
+  }
+
+  const token = auth?.split(' ')[1];
+  if (!token) {
+    userId = null;
+  }
+
+  const payload: JwtPayload | string | null | undefined = token && jwt.decode(token);
+
+  if (!payload) {
+    userId = null;
+  }
+  if (payload && typeof payload !== 'string') {
+    userId = payload.userId;
+  }
+
+  const comments = await commentsQueryRepo.find(req.query, req.params.postId, userId);
 
   res.status(httpStatutes.OK_200).json(comments);
 };
