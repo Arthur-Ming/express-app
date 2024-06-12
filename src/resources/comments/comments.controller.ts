@@ -23,7 +23,7 @@ export const getCommentForSpecifiedPostId = async (
   res: Response<{}, { userId: string }>
 ) => {
   const comments = await commentsQueryRepo.find(req.query, req.params.postId, res.locals.userId);
-  console.log(res.locals.userId);
+  console.log(req.query);
   res.status(httpStatutes.OK_200).json(comments);
 };
 
