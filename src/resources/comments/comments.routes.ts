@@ -15,7 +15,6 @@ import { commentsQueryParamsValidation } from './commentsValidation/commentsQuer
 import { paramsIdValidation } from './commentsValidation/paramsIdValidation';
 import { paramsSpecifiedIdValidation } from './commentsValidation/paramsSpecifiedIdValidation';
 import { likeCommentValidation } from './commentsValidation/likeCommentValidation';
-import { extractPayloadFromToken } from '../../utils/extractPayloadFromToken';
 
 const commentsRouter = Router();
 
@@ -23,15 +22,10 @@ commentsRouter.get(
   routes.commentBySpecifiedPostId,
   paramsPostIdValidation,
   commentsQueryParamsValidation,
-  /*extractPayloadFromToken,*/
-  // @ts-ignore
+
   getCommentForSpecifiedPostId
 );
-commentsRouter.get(
-  routes.commentById,
-  paramsIdValidation,
-  /*extractPayloadFromToken,*/ getCommentById
-);
+commentsRouter.get(routes.commentById, paramsIdValidation, getCommentById);
 commentsRouter.post(
   routes.commentBySpecifiedPostId,
   checkByJWTAuthorization,
