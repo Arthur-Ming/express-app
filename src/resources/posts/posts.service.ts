@@ -22,20 +22,6 @@ export class PostsService {
     };
   };
 
-  private mapToOutput = (
-    post: WithId<PostDbInterface>,
-    blog: WithId<BlogDbInterface>
-  ): PostOutputData => {
-    return {
-      id: post._id.toString(),
-      title: post.title,
-      shortDescription: post.shortDescription,
-      content: post.content,
-      blogId: post.blogId.toString(),
-      blogName: blog.name,
-      createdAt: post.createdAt,
-    };
-  };
   addPostForSpecificBlog = async (blogId: string, input: PostInputDataForSpecificBlog) => {
     const blog = await blogsRepository.findById(blogId);
 
@@ -45,7 +31,7 @@ export class PostsService {
     const newPost = this.mapToCreatePost(input, blog);
     const createdPost = await postsRepository.add(newPost);
 
-    return createdPost ? this.mapToOutput(createdPost, blog) : null;
+    return createdPost ? createdPost : null;
   };
 
   addPost = async (input: PostInputData) => {
