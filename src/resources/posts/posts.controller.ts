@@ -52,7 +52,12 @@ export const addPost = async (
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-  res.status(httpStatutes.CREATED_201).json(createdPost);
+  const post = await postsQueryRepo.findById(createdPost._id.toString());
+  if (!post) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.status(httpStatutes.CREATED_201).json(post);
 };
 
 export const addPostForSpecificBlog = async (
@@ -65,8 +70,12 @@ export const addPostForSpecificBlog = async (
     res.sendStatus(httpStatutes.NOT_FOUND_404);
     return;
   }
-
-  res.status(httpStatutes.CREATED_201).json(createdPost);
+  const post = await postsQueryRepo.findById(createdPost._id.toString());
+  if (!post) {
+    res.sendStatus(httpStatutes.NOT_FOUND_404);
+    return;
+  }
+  res.status(httpStatutes.CREATED_201).json(post);
 };
 
 export const updatePost = async (
