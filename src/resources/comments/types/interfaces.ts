@@ -1,10 +1,8 @@
 import { CommentsSortDirection } from './enum';
 import { CommentsDbInterface } from '../../../db/dbTypes/comments-db-interface';
 import { WithId } from 'mongodb';
-import {
-  CommentsLikesDbInterface,
-  LikeStatus,
-} from '../../../db/dbTypes/comments-likes-db-interface';
+import { CommentsLikesDbInterface } from '../../../db/dbTypes/comments-likes-db-interface';
+import { LikeStatus } from '../../../db/dbTypes/likes-db-interface';
 
 export interface CommentatorInfo {
   userId: string;

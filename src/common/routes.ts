@@ -5,6 +5,7 @@ export default {
   posts: `/${resources.posts}`,
   postById: `/${resources.posts}/:id`,
   postForBlog: `/${resources.blogs}/:blogId/${resources.posts}`,
+  postsLikes: `/${resources.posts}/:postId/like-status`,
   blogs: `/${resources.blogs}`,
   blogById: `/${resources.blogs}/:id`,
   users: `/${resources.users}`,

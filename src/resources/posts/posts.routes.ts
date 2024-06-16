@@ -6,14 +6,16 @@ import {
   deletePost,
   getPostById,
   getPosts,
+  likePost,
   updatePost,
 } from './posts.controller';
-import { checkBasicAuthorization } from '../../utils/authorization';
+import { checkBasicAuthorization, checkByJWTAuthorization } from '../../utils/authorization';
 import { postsForSpecificBlogIdValidation } from './postsValidation/postsForSpecificBlogIdValidation';
 import { postsInputBodyValidation } from './postsValidation/postsInputBodyValidation';
 import { postsQueryParamsValidation } from './postsValidation/postsQueryParamsValidation';
 import { postsInputBlogIdValidation } from './postsValidation/postsInputBlogIdValidation';
 import { postParamsIdValidation } from './postsValidation/postParamsIdValidation';
+import { likePostValidation } from './postsValidation/likePostValidation';
 
 const postsRouter = Router();
 
@@ -48,6 +50,7 @@ postsRouter.put(
   postsInputBodyValidation,
   updatePost
 );
+postsRouter.put(routes.postsLikes, checkByJWTAuthorization, likePostValidation, likePost);
 postsRouter.delete(routes.postById, postParamsIdValidation, checkBasicAuthorization, deletePost);
 
 export default postsRouter;

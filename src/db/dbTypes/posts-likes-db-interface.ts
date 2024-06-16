@@ -1,6 +1,6 @@
 import { LikesDbInterface } from './likes-db-interface';
 import { ObjectId } from 'mongodb';
 
-export interface CommentsLikesDbInterface extends LikesDbInterface {
-  commentId: ObjectId;
+export interface PostsLikesDbInterface extends LikesDbInterface {
+  postId: ObjectId;
 }

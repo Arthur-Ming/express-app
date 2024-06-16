@@ -2,8 +2,9 @@ import { Comments } from '../../db/collections/comments.collection';
 import { CommentsDbInterface } from '../../db/dbTypes/comments-db-interface';
 import { ObjectId } from 'mongodb';
 import { CommentsInputBody } from './types/interfaces';
-import { LikeStatus } from '../../db/dbTypes/comments-likes-db-interface';
+
 import { CommentsLikes } from '../../db/collections/commentsLikes.collection';
+import { LikeStatus } from '../../db/dbTypes/likes-db-interface';
 
 export class CommentsRepository {
   getTotalCount = async (postId: string) => {

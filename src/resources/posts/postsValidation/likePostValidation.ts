@@ -1,11 +1,11 @@
-import { commentExistingValidation } from './commentExistingValidation';
 import { param } from 'express-validator';
 import { paramIdCheckErrorsMiddleware } from '../../../utils/paramIdCheckErrorsMiddleware';
 import { likeStatusValidation } from '../../../utils/likeStatusValidation';
+import { checkPostExisting } from './checkPostExisting';
 
-export const likeCommentValidation = [
-  param('commentId').isMongoId(),
+export const likePostValidation = [
+  param('postId').isMongoId(),
   paramIdCheckErrorsMiddleware,
-  commentExistingValidation,
+  checkPostExisting,
   ...likeStatusValidation,
 ];

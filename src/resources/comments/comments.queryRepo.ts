@@ -7,7 +7,8 @@ import {
 } from './types/interfaces';
 import { CommentsRepository } from './comments.repository';
 import { Pagination } from '../../common/types/interfaces';
-import { CommentsLikesDbInterface, LikeStatus } from '../../db/dbTypes/comments-likes-db-interface';
+import { CommentsLikesDbInterface } from '../../db/dbTypes/comments-likes-db-interface';
+import { LikeStatus } from '../../db/dbTypes/likes-db-interface';
 
 const getCurrentUserLikeStatus = (
   likes: CommentsLikesDbInterface[],
