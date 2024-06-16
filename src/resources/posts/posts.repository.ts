@@ -2,6 +2,8 @@ import { ObjectId } from 'mongodb';
 import { PostDbInterface } from '../../db/dbTypes/post-db-interface';
 import { PostInputData, PostsPaginationParams } from './types/interfaces';
 import { Posts } from '../../db/collections/post.collection';
+import { LikeStatus } from '../../db/dbTypes/likes-db-interface';
+import { PostsLikes } from '../../db/collections/postsLikes.collection';
 
 export class PostsRepository {
   private filter = (blogId?: string) => {
@@ -62,5 +64,17 @@ export class PostsRepository {
   remove = async (postId: string): Promise<boolean> => {
     const deleteResult = await Posts.deleteOne({ _id: new ObjectId(postId) });
     return deleteResult.deletedCount === 1;
+  };
+
+  addLike = async (authorId: string, postId: string, status: LikeStatus) => {
+    const upsertResult = await PostsLikes.updateOne(
+      {
+        authorId: new ObjectId(authorId),
+        postId: new ObjectId(postId),
+      },
+      { $set: { status: status } },
+      { upsert: true }
+    );
+    return upsertResult.matchedCount === 1;
   };
 }

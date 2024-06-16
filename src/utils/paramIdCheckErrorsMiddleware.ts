@@ -5,7 +5,7 @@ export const paramIdCheckErrorsMiddleware = (req: Request, res: Response, next: 
   const e = validationResult(req);
 
   const errors = e.array({ onlyFirstError: true });
-
+  console.log(errors);
   if (errors.length) {
     res.sendStatus(404);
     return;

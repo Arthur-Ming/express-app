@@ -3,10 +3,29 @@ import { PostJoinedBlogDB, PostOutputData, PostsPaginationParams } from './types
 import { Posts } from '../../db/collections/post.collection';
 import { PostsRepository } from './posts.repository';
 import { Pagination } from '../../common/types/interfaces';
+import { LikeStatus } from '../../db/dbTypes/likes-db-interface';
+import { CommentsLikesDbInterface } from '../../db/dbTypes/comments-likes-db-interface';
+import { PostsLikesDbInterface } from '../../db/dbTypes/posts-likes-db-interface';
+import { PostsLikes } from '../../db/collections/postsLikes.collection';
 
 const postsRepository = new PostsRepository();
+
+const getCurrentUserLikeStatus = (
+  likes: PostsLikesDbInterface[],
+  currentUserId?: string
+): LikeStatus => {
+  if (!currentUserId) {
+    return LikeStatus.None;
+  }
+  const currentUserLike = likes.find((like) => like.authorId.toString() === currentUserId);
+  if (!currentUserLike) {
+    return LikeStatus.None;
+  }
+
+  return currentUserLike.status;
+};
 export class PostsQueryRepo {
-  private mapToOutput = (post: PostJoinedBlogDB): PostOutputData => {
+  private mapToOutput = (post: PostJoinedBlogDB, requestUserId?: string): PostOutputData => {
     return {
       id: post._id.toString(),
       title: post.title,
@@ -15,6 +34,19 @@ export class PostsQueryRepo {
       blogId: post.blogId.toString(),
       blogName: post.blogName,
       createdAt: post.createdAt,
+      extendedLikesInfo: {
+        likesCount: post.likes.filter((like) => like.status === LikeStatus.Like).length,
+        dislikesCount: post.likes.filter((like) => like.status === LikeStatus.Dislike).length,
+        myStatus: getCurrentUserLikeStatus(post.likes, requestUserId),
+        newestLikes: post.likes
+          .sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)))
+          .map((like) => ({
+            addedAt: like.createdAt.toISOString(),
+            userId: like.likeAuthor?._id ? like.likeAuthor._id.toString() : null,
+            login: like.likeAuthor?.login ? like.likeAuthor.login : null,
+          }))
+          .slice(0, 3),
+      },
     };
   };
 
@@ -28,6 +60,31 @@ export class PostsQueryRepo {
           as: 'blog',
         },
       },
+
+      {
+        $lookup: {
+          from: 'posts_likes',
+          localField: '_id',
+          foreignField: 'postId',
+          as: 'likes',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'authorId',
+                foreignField: '_id',
+                as: 'likeAuthors',
+              },
+            },
+            {
+              $addFields: {
+                likeAuthor: { $mergeObjects: [{ $arrayElemAt: ['$likeAuthors', 0] }] },
+              },
+            },
+          ],
+        },
+      },
+
       {
         $addFields: {
           blogInfo: { $mergeObjects: [{ $arrayElemAt: ['$blog', 0] }] },
@@ -43,6 +100,8 @@ export class PostsQueryRepo {
           blogName: '$blogInfo.name',
           blogId: 1,
           createdAt: 1,
+          likes: 1,
+          likeAuthor: 1,
         },
       },
     ];
@@ -50,7 +109,8 @@ export class PostsQueryRepo {
 
   find = async (
     queryParams: PostsPaginationParams,
-    blogId?: string
+    blogId?: string,
+    requestUserId?: string
   ): Promise<Pagination<PostOutputData[]>> => {
     const totalCount = await postsRepository.getTotalCount(queryParams, blogId);
 
@@ -64,6 +124,22 @@ export class PostsQueryRepo {
       { $limit: queryParams.pageSize },
     ]);
 
+    const likeAuthors = await PostsLikes.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: 'authorId',
+          as: 'likeAuthors',
+        },
+      },
+    ]);
+    console.log(
+      items.forEach((item) => {
+        console.log(item.likes[0]);
+      })
+    );
+    console.log(likeAuthors);
     return {
       pagesCount: Math.ceil(totalCount / queryParams.pageSize),
       page: queryParams.pageNumber,
@@ -73,7 +149,7 @@ export class PostsQueryRepo {
     };
   };
 
-  findById = async (postId: string) => {
+  findById = async (postId: string, requestUserId?: string) => {
     const posts = await Posts.aggregate([
       {
         $match: { _id: new ObjectId(postId) },

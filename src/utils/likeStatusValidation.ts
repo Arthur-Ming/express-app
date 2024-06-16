@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
-import { inputCheckErrorsMiddleware } from '../../../utils/inputCheckErrorsMiddleware';
-import { LikeStatus } from '../../../db/dbTypes/comments-likes-db-interface';
+import { LikeStatus } from '../db/dbTypes/likes-db-interface';
+import { inputCheckErrorsMiddleware } from './inputCheckErrorsMiddleware';
 
 export const likeStatusValidation = [
   body('likeStatus').custom(async (value) => {
