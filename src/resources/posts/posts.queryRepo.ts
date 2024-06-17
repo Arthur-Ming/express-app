@@ -4,7 +4,6 @@ import { Posts } from '../../db/collections/post.collection';
 import { PostsRepository } from './posts.repository';
 import { Pagination } from '../../common/types/interfaces';
 import { LikeStatus } from '../../db/dbTypes/likes-db-interface';
-import { CommentsLikesDbInterface } from '../../db/dbTypes/comments-likes-db-interface';
 import { PostsLikesDbInterface } from '../../db/dbTypes/posts-likes-db-interface';
 import { PostsLikes } from '../../db/collections/postsLikes.collection';
 
@@ -39,6 +38,7 @@ export class PostsQueryRepo {
         dislikesCount: post.likes.filter((like) => like.status === LikeStatus.Dislike).length,
         myStatus: getCurrentUserLikeStatus(post.likes, requestUserId),
         newestLikes: post.likes
+          .filter((like) => like.status === LikeStatus.Like)
           .sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)))
           .map((like) => ({
             addedAt: like.createdAt.toISOString(),
