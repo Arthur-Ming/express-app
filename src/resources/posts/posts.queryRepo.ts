@@ -145,7 +145,7 @@ export class PostsQueryRepo {
       page: queryParams.pageNumber,
       pageSize: queryParams.pageSize,
       totalCount: totalCount,
-      items: items.map((item) => this.mapToOutput(item)),
+      items: items.map((item) => this.mapToOutput(item, requestUserId)),
     };
   };
 
@@ -161,6 +161,6 @@ export class PostsQueryRepo {
       return null;
     }
 
-    return this.mapToOutput(posts[0]);
+    return this.mapToOutput(posts[0], requestUserId);
   };
 }
